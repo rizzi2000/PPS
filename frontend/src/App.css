@@ -1,0 +1,182 @@
+:root {
+  --primary: #6366f1; /* Indigo */
+  --primary-dark: #4338ca;
+  --bg-app: #f1f5f9;
+  --bg-panel: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 300px;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+.brand h1 { margin: 0; font-size: 1.5rem; }
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.upload-btn {
+  border: 1px dashed var(--text-muted);
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+.upload-btn:hover { background: #f8fafc; border-color: var(--primary); color: var(--primary); }
+
+.process-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.process-btn:hover { background: var(--primary-dark); }
+.process-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+.clinical-summary h3 { font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+.clinical-summary p { font-size: 0.9rem; line-height: 1.5; }
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin: 2px;
+}
+.role-badge.paciente { background: #fee2e2; color: #991b1b; }
+.role-badge.profesional { background: #dbeafe; color: #1e40af; }
+
+/* MAIN CONTENT */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.card {
+  background: var(--bg-panel);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: var(--text-muted);
+}
+.card-header h2 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+/* WAVEFORM */
+.waveform-container { width: 100%; margin-bottom: 15px; }
+.controls { display: flex; align-items: center; gap: 15px; }
+.play-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.time-display { font-family: monospace; font-size: 1.1rem; }
+
+/* TRANSCRIPT */
+.transcript-card { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.transcript-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message-row {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid transparent;
+  transition: 0.2s;
+}
+
+.message-row.active {
+  background-color: #f0fdf4; /* Verde muy suave cuando habla */
+  border-left-color: #22c55e;
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.message-row.paciente { background-color: #fff1f2; } /* Rojo muy suave */
+.message-row.profesional { background-color: #f8fafc; } /* Gris/Azul muy suave */
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.timestamp { font-family: monospace; font-weight: bold; }
+.emotion { font-style: italic; color: #818cf8; }
+
+.content { flex: 1; }
+.text-es { margin: 0 0 5px 0; font-size: 1rem; color: var(--text-main); }
+.text-en { margin: 0; font-size: 0.9rem; color: var(--text-muted); font-style: italic; }
+
+.metrics { display: flex; flex-direction: column; gap: 5px; justify-content: center; }
+.warning-badge { background: #fef3c7; color: #b45309; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+.info-badge { background: #e0f2fe; color: #0369a1; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }

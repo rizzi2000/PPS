@@ -1,0 +1,1567 @@
+{
+  "dialogo": [
+    {
+      "fin": "00:23",
+      "hablante": "Profesional",
+      "inicio": "00:16",
+      "rol": "Profesional",
+      "texto_en": "Could you tell me a little bit more in detail about what you consider is contributing to your depression?",
+      "texto_es": "¿Me podrías hablar un poco más a detalle acerca de lo que tú consideras está contribuyendo a tu depresión?"
+    },
+    {
+      "fin": "00:36",
+      "hablante": "Paciente",
+      "inicio": "00:25",
+      "rol": "Paciente",
+      "texto_en": "I have a lot of problems, but things are going very badly for me at work. I think they're going to fire me. And that worries me quite a bit.",
+      "texto_es": "Tengo muchos problemas, pero en el trabajo me está yendo muy mal. Creo que me van a correr. Y me preocupa bastante."
+    },
+    {
+      "fin": "00:44",
+      "hablante": "Paciente",
+      "inicio": "00:37",
+      "rol": "Paciente",
+      "texto_en": "I have a lot of problems with my girlfriend, that makes me feel really bad. I worry a lot, I am very afraid she will leave me.",
+      "texto_es": "Tengo muchos problemas con mi novia, me tiene muy mal eso. Me preocupo mucho, tengo mucho miedo de que me deje."
+    },
+    {
+      "fin": "00:51",
+      "hablante": "Paciente",
+      "inicio": "00:46",
+      "rol": "Paciente",
+      "texto_en": "And well, I already have some problems with my children that are making me feel bad, and that's it.",
+      "texto_es": "Y pues ya tengo algunos problemas con mis hijos que me tienen mal y ya."
+    },
+    {
+      "fin": "01:07",
+      "hablante": "Profesional",
+      "inicio": "00:52",
+      "rol": "Profesional",
+      "texto_en": "Okay, so there are problems that you're doing badly at work and you're worried that they'll fire you. Another problem is that it also seems like you're having trouble with your girlfriend, and this third problem about your children is not so clear to me. Could you explain it to me a little more concretely?",
+      "texto_es": "Okay, dos son problemas que te vas con mal en el trabajo y te preocupa que te corran, otro problema es que también parece de que hay traes broncas con la novia, y este tercer problema no me queda tan claro esto de tus hijos. ¿Me lo podrías explicar un poquito más concretamente?"
+    },
+    {
+      "fin": "01:21",
+      "hablante": "Paciente",
+      "inicio": "01:08",
+      "rol": "Paciente",
+      "texto_en": "Well, it's just that the other day I fought with my girlfriend and, and, um, I got home and I got really bad. I got really bad and I started drinking and...",
+      "texto_es": "Pues es que el otro día me me peleé con mi novia y y este, llegué a la casa y me puse muy mal. Me puse muy mal y me puse a tomar y"
+    },
+    {
+      "fin": "01:35",
+      "hablante": "Paciente",
+      "inicio": "01:21",
+      "rol": "Paciente",
+      "texto_en": "And suddenly my mother appeared and and she started fighting with me and she started criticizing me and she started judging me. How is it possible that I start drinking, that I...",
+      "texto_es": "Y de repente apareció mi mamá y y se puso a pelear conmigo y me empezó a criticar y me empezó a juzgar. Cómo es posible que que yo me ponga a tomar, que yo"
+    },
+    {
+      "fin": "01:44",
+      "hablante": "Paciente",
+      "inicio": "01:36",
+      "rol": "Paciente",
+      "texto_en": "Knowing that I have a 2-year-old son and a 4-year-old daughter. But the truth is I knew they were asleep. She got very cold there.",
+      "texto_es": "Sabiendo que tengo un hijo de 2 años y una de 4. Pero la verdad es que yo sabía que estaban dormidas. Se puso muy fría ahí."
+    },
+    {
+      "fin": "01:47",
+      "hablante": "Profesional",
+      "inicio": "01:46",
+      "rol": "Profesional",
+      "texto_en": "Your mom reacted very badly.",
+      "texto_es": "Tu reaccionó muy mal tu mamá."
+    },
+    {
+      "fin": "02:00",
+      "hablante": "Paciente",
+      "inicio": "01:48",
+      "rol": "Paciente",
+      "texto_en": "Yes, she reacted very badly. I mean, it's not like she screamed at me and got angry, but it's this thing that she gets she's been very cold lately.",
+      "texto_es": "Sí, reaccionó muy mal. Digo, no es como si si si si me gritara y se enojara, pero es esta cuestión de que se pone ha estado muy fría últimamente."
+    },
+    {
+      "fin": "02:08",
+      "hablante": "Paciente",
+      "inicio": "02:01",
+      "rol": "Paciente",
+      "texto_en": "I mean, she she didn't know I was bisexual and that my partner is a woman.",
+      "texto_es": "Digo, ella ella no sabía que yo era bisexual y que mi mi pareja es mujer."
+    },
+    {
+      "fin": "02:18",
+      "hablante": "Paciente",
+      "inicio": "02:08",
+      "rol": "Paciente",
+      "texto_en": "And well, my mother is a Jehovah's Witness and she doesn't accept this. She, these issues of homosexuality, she doesn't accept them.",
+      "texto_es": "Y pues mi mamá es testigo de Jehová y ella no acepta esto. Ella este temas de la homosexualidad, no los acepta."
+    },
+    {
+      "fin": "02:25",
+      "hablante": "Paciente",
+      "inicio": "02:19",
+      "rol": "Paciente",
+      "texto_en": "And well, my whole family is the same and and she says I'm a bad mother.",
+      "texto_es": "Y pues toda mi familia igual y y pues dice que soy una mala madre."
+    },
+    {
+      "fin": "02:29",
+      "hablante": "Profesional",
+      "inicio": "02:26",
+      "rol": "Profesional",
+      "texto_en": "That must be difficult for them to tell you that.",
+      "texto_es": "Que es difícil que te digan eso."
+    },
+    {
+      "fin": "02:34",
+      "hablante": "Paciente",
+      "inicio": "02:31",
+      "rol": "Paciente",
+      "texto_en": "She has always been like this. The truth is she has always been very cold.",
+      "texto_es": "Siempre ha sido así. La verdad es que siempre ha sido muy fría."
+    },
+    {
+      "fin": "02:35",
+      "hablante": "Profesional",
+      "inicio": "02:34",
+      "rol": "Profesional",
+      "texto_en": "Since you were little?",
+      "texto_es": "¿Desde chica?"
+    },
+    {
+      "fin": "02:38",
+      "hablante": "Paciente",
+      "inicio": "02:35",
+      "rol": "Paciente",
+      "texto_en": "Since I was little. Well, I don't know why it surprises me.",
+      "texto_es": "Desde chica. Pues no sé por qué me sorprende."
+    },
+    {
+      "fin": "02:44",
+      "hablante": "Profesional",
+      "inicio": "02:39",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, since you were little, she was very cold towards you.",
+      "texto_es": "Okay. Entonces, desde chica fue fue muy fría contigo."
+    },
+    {
+      "fin": "02:57",
+      "hablante": "Paciente",
+      "inicio": "02:45",
+      "rol": "Paciente",
+      "texto_en": "I always wanted her to be very affectionate and, well, for her to understand me, for her to hug me. But she has always been very cold.",
+      "texto_es": "Yo siempre quise que fuera como muy cariñosa y y pues que me entendiera, que me abrazara. Pero siempre ha sido muy fría."
+    },
+    {
+      "fin": "03:00",
+      "hablante": "Profesional",
+      "inicio": "02:58",
+      "rol": "Profesional",
+      "texto_en": "And what did this episode with your mom end in?",
+      "texto_es": "Y, ¿en qué terminó este episodio con tu mamá?"
+    },
+    {
+      "fin": "03:10",
+      "hablante": "Paciente",
+      "inicio": "03:00",
+      "rol": "Paciente",
+      "texto_en": "She left and the next day she came back when I was already home after work and she told me that maybe it was a good idea for the children to go live with her.",
+      "texto_es": "Se fue y al siguiente día regresó cuando yo ya estaba en la casa después del trabajo y me dijo que a lo mejor era buena idea que los niños se fueran a vivir con ella."
+    },
+    {
+      "fin": "03:14",
+      "hablante": "Paciente",
+      "inicio": "03:11",
+      "rol": "Paciente",
+      "texto_en": "And well, maybe it is the best thing.",
+      "texto_es": "Y pues a lo mejor tal vez sí es lo mejor."
+    },
+    {
+      "fin": "03:16",
+      "hablante": "Profesional",
+      "inicio": "03:15",
+      "rol": "Profesional",
+      "texto_en": "So, you, you do consider it?",
+      "texto_es": "¿Tú entonces, tú sí lo consideras?"
+    },
+    {
+      "fin": "03:25",
+      "hablante": "Paciente",
+      "inicio": "03:19",
+      "rol": "Paciente",
+      "texto_en": "I think about it a little. Maybe it is a good idea, because maybe they are better off without me.",
+      "texto_es": "Lo pienso un poco. A lo mejor sí es una buena idea, pues porque pues a lo mejor están mejor sin mí."
+    },
+    {
+      "fin": "03:26",
+      "hablante": "Paciente",
+      "inicio": "03:26",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "03:43",
+      "hablante": "Profesional",
+      "inicio": "03:27",
+      "rol": "Profesional",
+      "texto_en": "So, the third problem, just to summarize up to this point, one is this thing about you having trouble with your girlfriend, your job, and what you told me about your children, well, it's really a matter of whether you don't know if your children are going to live with your mother or not. Am I understanding you correctly?",
+      "texto_es": "Entonces, el tercer problema, como para resumir hasta este punto, uno es esto de que traes broncas con la novia, tu trabajo, y eso que me dijiste de mis hijos, pues realmente es una cuestión de que no sabes si si tus hijos se van a vivir con tu mamá o no. ¿Te estoy entendiendo bien?"
+    },
+    {
+      "fin": "03:52",
+      "hablante": "Paciente",
+      "inicio": "03:44",
+      "rol": "Paciente",
+      "texto_en": "Yes, I really don't know, but it worries me a lot, it makes me sad to think about that. I love my children very much.",
+      "texto_es": "Sí, realmente no sé, pero sí me preocupa bastante, me pone me pone triste pensar en eso. Quiero mucho a mis hijos."
+    },
+    {
+      "fin": "04:12",
+      "hablante": "Profesional",
+      "inicio": "03:54",
+      "rol": "Profesional",
+      "texto_en": "Well, we're going to do the following. For you, the general point of today's session was to work on your depression, which is a lot of sadness that you are presenting. And you are relating some problems, which I consider all very important, that are contributing to your depression, both the work one, the girlfriend one, and this issue with your children.",
+      "texto_es": "Bueno, vamos a hacer lo siguiente. Contigo, el punto de la sesión el día de hoy, la general, era trabajar en tu depresión, que es mucha tristeza la que estás presentando. Y me estás relatando problemas, que yo considero todos muy importantes, que están contribuyendo a tu depresión, tanto el de trabajo, como la novia, como esta cuestión con tus hijos."
+    },
+    {
+      "fin": "04:32",
+      "hablante": "Profesional",
+      "inicio": "04:13",
+      "rol": "Profesional",
+      "texto_en": "However, I consider that we are not going to have time to touch on all three topics. So, if we could focus on one, either the one about work, your partner, or your children, which of these three generates the most discomfort for you? Which one would you like us to focus on for the rest of the session? Because I want to handle it by components. We are going to talk about everything, but...",
+      "texto_es": "Sin embargo, considero que no nos va a dar tiempo de tocar los tres temas. Entonces, si pudiéramos enfocarnos a uno, ya sea el del trabajo, el de tu pareja o el de tus hijos, eh, ¿cuál de esos tres te genera más malestar? ¿En cuál te gustaría que nos enfocáramos el el resto de la sesión? Porque lo quiero manejar por componentes. Vamos a platicar de todo, pero"
+    },
+    {
+      "fin": "04:47",
+      "hablante": "Paciente",
+      "inicio": "04:33",
+      "rol": "Paciente",
+      "texto_en": "Well, this, the work thing doesn't worry me so much because I don't think they're going to fire me so soon. I mean, I know I'm doing badly, I know I'm not performing at my maximum, but it doesn't worry me.",
+      "texto_es": "Pues este, no me preocupa tanto lo del trabajo porque no creo que me vayan a correr tan pronto. Digo, sé que estoy mal, sé que no estoy rindiendo a mi máximo, pero no me preocupa."
+    },
+    {
+      "fin": "05:04",
+      "hablante": "Paciente",
+      "inicio": "04:47",
+      "rol": "Paciente",
+      "texto_en": "I mean, it does worry me because it is the source of money in my house and I say, what are we going to do? But, but, but I don't think it's so... It doesn't hit me so hard, so to speak. Yes, no, I mean, maybe the thing about my girlfriend because I don't know what I'm going to do if she leaves me.",
+      "texto_es": "Digo, sí me preocupa porque es la fuente de de de dinero en mi casa y digo, ¿qué vamos a hacer? Pero pero pero no lo creo tan... No me pega tanto, como dice. Sí, no, o sea, a lo mejor lo de mi novia porque pues no sé qué voy a hacer si me deja."
+    },
+    {
+      "fin": "05:13",
+      "hablante": "Paciente",
+      "inicio": "05:04",
+      "rol": "Paciente",
+      "texto_en": "But it also distresses me a lot to think, to think of myself without my children.",
+      "texto_es": "Pero me angustia mucho también pensar, pensarme sin mis hijos."
+    },
+    {
+      "fin": "05:22",
+      "hablante": "Profesional",
+      "inicio": "05:14",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, we have to choose one of those two, because I repeat, we are going to talk about everything, if the girlfriend topic of course we will touch on it, but if we had to choose one for this session...",
+      "texto_es": "Okay. Entonces, tenemos que elegir uno de esos dos, porque te reitero, vamos a platicar de todo, si el novia por supuesto nos toca ese tema, pero si para esta sesión tuviéramos que elegir uno"
+    },
+    {
+      "fin": "05:31",
+      "hablante": "Profesional",
+      "inicio": "05:23",
+      "rol": "Profesional",
+      "texto_en": "Would we touch the topic, the problem, your girlfriend's and this fear that the relationship won't work, or or your children's?",
+      "texto_es": "¿Tocaríamos el el tema, el problema el de tu novia y este miedo de de que la relación no funcione o o el de tus hijos?"
+    },
+    {
+      "fin": "05:34",
+      "hablante": "Paciente",
+      "inicio": "05:32",
+      "rol": "Paciente",
+      "texto_en": "I think my children's is more important.",
+      "texto_es": "Creo que el de mis hijos es más importante."
+    },
+    {
+      "fin": "05:42",
+      "hablante": "Profesional",
+      "inicio": "05:35",
+      "rol": "Profesional",
+      "texto_en": "Okay. I would like to get a slightly broader overview of the problem with, about whether your children are going to go with your mother or not.",
+      "texto_es": "Okay. Quisiera darme un panorama un poquito más amplio acerca de del problema con, acerca de si tus hijos se van a ir con con tu mamá o no."
+    },
+    {
+      "fin": "05:47",
+      "hablante": "Profesional",
+      "inicio": "05:43",
+      "rol": "Profesional",
+      "texto_en": "So, remind me, does the father exist in the picture, does he not exist in the picture?",
+      "texto_es": "Entonces, recuérdame, el papá existe en el panorama, no existe en el panorama?"
+    },
+    {
+      "fin": "05:55",
+      "hablante": "Paciente",
+      "inicio": "05:48",
+      "rol": "Paciente",
+      "texto_en": "Yes, he is, but he left a long time ago. He doesn't even worry about them anymore, he doesn't even send them money.",
+      "texto_es": "Sí, está, pero se fue hace mucho. Ya ni siquiera se preocupa por ellos, ni siquiera les manda dinero."
+    },
+    {
+      "fin": "05:58",
+      "hablante": "Profesional",
+      "inicio": "05:56",
+      "rol": "Profesional",
+      "texto_en": "Okay, he doesn't send money.",
+      "texto_es": "Okay, no manda dinero."
+    },
+    {
+      "fin": "05:58",
+      "hablante": "Paciente",
+      "inicio": "05:57",
+      "rol": "Paciente",
+      "texto_en": "It's like he doesn't exist.",
+      "texto_es": "Es como si no existiera."
+    },
+    {
+      "fin": "06:04",
+      "hablante": "Profesional",
+      "inicio": "05:59",
+      "rol": "Profesional",
+      "texto_en": "Okay, so he doesn't write to them, he calls them. No, he doesn't care. He doesn't care, he doesn't care about anything.",
+      "texto_es": "Okay, entonces no les escribe, les llama. No, no les importa. No le importa, no le importa nada."
+    },
+    {
+      "fin": "06:06",
+      "hablante": "Profesional",
+      "inicio": "06:05",
+      "rol": "Profesional",
+      "texto_en": "So, the custody is really yours.",
+      "texto_es": "Entonces, realmente la custodia es tuya."
+    },
+    {
+      "fin": "06:07",
+      "hablante": "Paciente",
+      "inicio": "06:07",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "06:13",
+      "hablante": "Profesional",
+      "inicio": "06:09",
+      "rol": "Profesional",
+      "texto_en": "So, if your children were to go live with your mother, it's because you decide it that way. Is that correct?",
+      "texto_es": "Entonces, si tus hijos se fueran a vivir con tu mamá, es porque tú lo decides así. ¿Es correcto?"
+    },
+    {
+      "fin": "06:15",
+      "hablante": "Paciente",
+      "inicio": "06:14",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "06:23",
+      "hablante": "Profesional",
+      "inicio": "06:16",
+      "rol": "Profesional",
+      "texto_en": "Okay. And as I listen to you, I'm kind of, I don't know, interpreting it as if there were two sides. Now, help me with that here.",
+      "texto_es": "Okay. Y mientras te escucho, o sea, como que estoy, no sé, interpretando como si existieran dos lados. Ahora, aquí ayúdame con eso."
+    },
+    {
+      "fin": "06:33",
+      "hablante": "Profesional",
+      "inicio": "06:24",
+      "rol": "Profesional",
+      "texto_en": "I mean, on the one hand, I hear a part that doesn't want to be separated from your children. You tell me, 'I love them, I love them very much' and I see discomfort when you touched that subject.",
+      "texto_es": "O sea, por un lado como que escucho una parte que no se quiere separar de tus hijos. Me dices, 'los quiero, los quiero mucho' y se te ve malestar cuando tocaste ese tema."
+    },
+    {
+      "fin": "06:42",
+      "hablante": "Profesional",
+      "inicio": "06:34",
+      "rol": "Profesional",
+      "texto_en": "But also, I don't know, in a parallel way, there's this other side that seems to think that they should go live with your mother.",
+      "texto_es": "Pero también, no sé, de forma paralela, hay este otro lado que pareciera pensar que sí se deberían de ir a vivir con con tu mamá."
+    },
+    {
+      "fin": "06:43",
+      "hablante": "Profesional",
+      "inicio": "06:43",
+      "rol": "Profesional",
+      "texto_en": "Am I understanding you correctly?",
+      "texto_es": "¿Te estoy entendiendo bien?"
+    },
+    {
+      "fin": "06:48",
+      "hablante": "Paciente",
+      "inicio": "06:45",
+      "rol": "Paciente",
+      "texto_en": "It's just that on the one hand I think they would be better off with her.",
+      "texto_es": "Es que por una parte creo que estarían mejor con ella."
+    },
+    {
+      "fin": "07:03",
+      "hablante": "Profesional",
+      "inicio": "06:50",
+      "rol": "Profesional",
+      "texto_en": "Okay. I would like to delve a little deeper. So, what goes through your mind when you are, well, thinking about this topic, that they should go live with her?",
+      "texto_es": "Okay. Me gustaría profundizarnos un poquito más. Entonces, ¿qué cruza por tu mente cuando estás, pues, pensando acerca de este tema, de que se deberían de ir a vivir con ella?"
+    },
+    {
+      "fin": "07:17",
+      "hablante": "Paciente",
+      "inicio": "07:07",
+      "rol": "Paciente",
+      "texto_en": "Well, that they would be better off there. They would be they would be, I don't know, calmer, happier. They would be better off without me.",
+      "texto_es": "Pues que estarían mejor ahí. Estarían estarían, no sé, más tranquilos, más contentos. Estarían estarían mejor sin mí."
+    },
+    {
+      "fin": "07:24",
+      "hablante": "Paciente",
+      "inicio": "07:20",
+      "rol": "Paciente",
+      "texto_en": "And she could take care of them and pay attention to them and.",
+      "texto_es": "Y ella sí podría cuidarlos y ponerles atenciones y."
+    },
+    {
+      "fin": "07:32",
+      "hablante": "Profesional",
+      "inicio": "07:25",
+      "rol": "Profesional",
+      "texto_en": "So, when you think, 'they would be better off without me,' what effect does that thought have?",
+      "texto_es": "Entonces, cuando piensas en 'ellos estarían mejor sin mí', ¿qué efecto tiene ese pensamiento?"
+    },
+    {
+      "fin": "07:43",
+      "hablante": "Paciente",
+      "inicio": "07:37",
+      "rol": "Paciente",
+      "texto_en": "That they are better off without me, I mean, I am not a good role model.",
+      "texto_es": "Que están mejor sin mí, o sea, yo no soy un buen ejemplo a seguir."
+    },
+    {
+      "fin": "07:57",
+      "hablante": "Paciente",
+      "inicio": "07:44",
+      "rol": "Paciente",
+      "texto_en": "And and it worries me because if sometimes I feel like dying and they are there, well, I don't want to hurt them and if one day it occurs to me, I don't want them to be there. I feel it.",
+      "texto_es": "Y y me preocupa porque si a veces me dan ganas de morirme y ellos están ahí, pues yo no quiero hacerles daño y si algún día se me ocurre, yo no quiero que estén ahí. Se siente."
+    },
+    {
+      "fin": "08:02",
+      "hablante": "Profesional",
+      "inicio": "07:58",
+      "rol": "Profesional",
+      "texto_en": "So, you also tell me that sometimes the thought of not wanting to live crosses your mind.",
+      "texto_es": "Entonces, también me dices que a veces cruza por tu mente el ya no querer vivir."
+    },
+    {
+      "fin": "08:04",
+      "hablante": "Paciente",
+      "inicio": "08:04",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "08:13",
+      "hablante": "Profesional",
+      "inicio": "08:05",
+      "rol": "Profesional",
+      "texto_en": "And when that feeling is strongest, that idea of not wanting to live, what are you thinking at that moment?",
+      "texto_es": "Y cuando está más fuerte ese sentimiento, esa idea de no querer vivir, ¿qué es lo que estás pensando en ese momento?"
+    },
+    {
+      "fin": "08:17",
+      "hablante": "Paciente",
+      "inicio": "08:14",
+      "rol": "Paciente",
+      "texto_en": "That I am very sad.",
+      "texto_es": "Que estoy muy triste."
+    },
+    {
+      "fin": "08:26",
+      "hablante": "Paciente",
+      "inicio": "08:19",
+      "rol": "Paciente",
+      "texto_en": "That I am a bad mother and that I am a failure as a person and that maybe my mother is right.",
+      "texto_es": "Que soy una mala madre y que soy un fracaso como persona y que a lo mejor mi mamá tiene razón."
+    },
+    {
+      "fin": "08:39",
+      "hablante": "Profesional",
+      "inicio": "08:28",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, there are many thoughts that you are relating to me, like I am a failure as a mother, my mother is right, and my children will be better off without me.",
+      "texto_es": "Okay. Entonces, hay muchos pensamientos que me estás relatando, o sea, como soy un fracaso como madre, eh, mi mamá tiene razón y y mis hijos van a estar mejor sin sin mí."
+    },
+    {
+      "fin": "08:50",
+      "hablante": "Profesional",
+      "inicio": "08:40",
+      "rol": "Profesional",
+      "texto_en": "And thinking all that is what sometimes leads us to feel very, very sad and even consider not living anymore, is that right?",
+      "texto_es": "Y pensar todo eso es lo que a veces nos nos lleva a a sentirte muy muy triste e incluso considerar el ya no vivir, ¿así es?"
+    },
+    {
+      "fin": "08:51",
+      "hablante": "Paciente",
+      "inicio": "08:50",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "09:05",
+      "hablante": "Profesional",
+      "inicio": "08:52",
+      "rol": "Profesional",
+      "texto_en": "Now, of these thoughts, like 'I am a failure as a mother' or 'my children would be better off without me,' which one do you feel is the strongest of those thoughts? Which one hurts you the most?",
+      "texto_es": "Ahora, de estos pensamientos, o sea, tipo 'soy un fracaso como madre' o 'mis hijos estarían mejor sin mí', ¿cuál es el que sientes más fuerte de esos pensamientos? ¿Cuál es el que te duele más?"
+    },
+    {
+      "fin": "09:10",
+      "hablante": "Paciente",
+      "inicio": "09:08",
+      "rol": "Paciente",
+      "texto_en": "That they would be better off without me.",
+      "texto_es": "Que estarían mejor sin mí."
+    },
+    {
+      "fin": "09:16",
+      "hablante": "Profesional",
+      "inicio": "09:11",
+      "rol": "Profesional",
+      "texto_en": "That they would be better off without me. Okay. If I ask you from 0 to 100, 100% you are sure, total certainty.",
+      "texto_es": "Que estarían mejor sin mí. Okay. Si te pregunto del 0 al 100, 100% estás segura, total certeza."
+    },
+    {
+      "fin": "09:21",
+      "hablante": "Profesional",
+      "inicio": "09:17",
+      "rol": "Profesional",
+      "texto_en": "How much do you believe in that thought? How much do you think your children would be better off without you?",
+      "texto_es": "¿Qué tanto crees en ese pensamiento? ¿Qué tanto crees que tus hijos estarían mejor sin ti?"
+    },
+    {
+      "fin": "09:22",
+      "hablante": "Paciente",
+      "inicio": "09:22",
+      "rol": "Paciente",
+      "texto_en": "A lot.",
+      "texto_es": "Mucho."
+    },
+    {
+      "fin": "09:26",
+      "hablante": "Profesional",
+      "inicio": "09:23",
+      "rol": "Profesional",
+      "texto_en": "If you gave me a number, how much is a lot? From 0 to 100.",
+      "texto_es": "Si me dirías un número, ¿qué es mucho? Del 0 al 100."
+    },
+    {
+      "fin": "09:34",
+      "hablante": "Paciente",
+      "inicio": "09:29",
+      "rol": "Paciente",
+      "texto_en": "95%. I really think that I really think that they would be fine.",
+      "texto_es": "95%. Realmente pienso que realmente pienso que estarían bien."
+    },
+    {
+      "fin": "09:52",
+      "hablante": "Profesional",
+      "inicio": "09:36",
+      "rol": "Profesional",
+      "texto_en": "Okay. Well, in the past, you and I have talked, in a previous session, that situations do not determine emotions, but what you feel at the moment is sadness, well, it comes from your thoughts. Thoughts are what lead to emotions.",
+      "texto_es": "Bueno, en el pasado hemos platicado tú y yo, sesión anterior, que que las situaciones no determinan las emociones, entonces lo que tú sientes hasta el momento es tristeza, pues viene de los pensamientos. Son los pensamientos que llevan a las emociones."
+    },
+    {
+      "fin": "10:04",
+      "hablante": "Profesional",
+      "inicio": "09:53",
+      "rol": "Profesional",
+      "texto_en": "And here we have found a thought that has very, very strong consequences. This thought of 'my children would be better off without me,' that is, it has the connotation of, like I'm hurting them, that's how we're understanding it.",
+      "texto_es": "Y aquí pues hemos encontrado un pensamiento que tiene consecuencias muy muy fuertes. Este pensamiento de 'mis hijos estarían mejor sin mí', o sea, esta connotación de, como que les hago daño, así lo estamos entendiendo."
+    },
+    {
+      "fin": "10:18",
+      "hablante": "Profesional",
+      "inicio": "10:06",
+      "rol": "Profesional",
+      "texto_en": "And since that thought is generating so much discomfort, to the point that it is almost taking away your will to live. Since I consider that thought so important and it has so many consequences, I would like us to keep that in mind.",
+      "texto_es": "Y como ese pensamiento está generando tanto malestar, al punto que te está quitando casi casi las ganas de vivir. Como ese pensamiento lo considero tan importante y tiene tantas consecuencias, me gustaría que tengamos eso en mente."
+    },
+    {
+      "fin": "10:33",
+      "hablante": "Profesional",
+      "inicio": "10:18",
+      "rol": "Profesional",
+      "texto_en": "That is, not all thoughts are 100% true, which is why I would like you and me to take a look at that thought in a more careful, more structured way to see how accurate this thought can be. Does that seem right? Should we evaluate that thought together?",
+      "texto_es": "O sea, que no todos los pensamientos son 100% verdaderos, por eso me gustaría que tú y yo le echemos un vistazo a ese pensamiento de una forma más cuidadosa, más estructurada para ver qué tan certero puede llegar a ser este pensamiento. ¿Te parece si hacemos eso? ¿Si evaluamos entre los dos ese pensamiento?"
+    },
+    {
+      "fin": "10:34",
+      "hablante": "Paciente",
+      "inicio": "10:33",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "10:42",
+      "hablante": "Profesional",
+      "inicio": "10:35",
+      "rol": "Profesional",
+      "texto_en": "Okay. Well, then I would like you to tell me, what makes you think that your children will be better off without you? What leads you to that conclusion?",
+      "texto_es": "Okay. Bueno, entonces me gustaría que me digas, ¿qué es lo que te hace pensar que tus hijos van a estar mejor sin ti? ¿Qué qué te lleva a esa conclusión?"
+    },
+    {
+      "fin": "10:48",
+      "hablante": "Paciente",
+      "inicio": "10:44",
+      "rol": "Paciente",
+      "texto_en": "It's just that I'm not a good mother, sometimes.",
+      "texto_es": "Es que no soy una buena madre, a veces."
+    },
+    {
+      "fin": "10:54",
+      "hablante": "Paciente",
+      "inicio": "10:51",
+      "rol": "Paciente",
+      "texto_en": "Sometimes I don't take good care of them or I don't pay them much attention.",
+      "texto_es": "A veces no los cuido bien o no les pongo muchas atenciones."
+    },
+    {
+      "fin": "11:11",
+      "hablante": "Paciente",
+      "inicio": "10:57",
+      "rol": "Paciente",
+      "texto_en": "I'm not good at cooking. And the other day, to try to cook fast, to get things out fast, well, I make food that may not be very healthy, and the truth is I'm embarrassed to tell you, but",
+      "texto_es": "Yo no soy buena cocinando. Y el otro día por tratar de cocinar rápido, de sacar las cosas rápido, pues hago comida que a lo mejor no es muy saludable y la verdad es que sí me da vergüenza decirte, pero"
+    },
+    {
+      "fin": "11:26",
+      "hablante": "Paciente",
+      "inicio": "11:11",
+      "rol": "Paciente",
+      "texto_en": "but my oldest son already has a tooth problem because they eat a lot of sweets, they eat a lot, they eat a lot of junk food, and to make things easier for me, well, I buy them easy things, you know?",
+      "texto_es": "pero mi hijo el más el más grande ya tiene un problema en los dientes porque pues comen mucho dulce, comen muchas comen muchas chucherías, y yo por facilitarme las cosas, pues les compro cosas fáciles, ¿no?"
+    },
+    {
+      "fin": "11:27",
+      "hablante": "Profesional",
+      "inicio": "11:27",
+      "rol": "Profesional",
+      "texto_en": "Okay.",
+      "texto_es": "Okay."
+    },
+    {
+      "fin": "11:44",
+      "hablante": "Paciente",
+      "inicio": "11:28",
+      "rol": "Paciente",
+      "texto_en": "Sometimes they ask me to go to the park and and I feel tired and and I get depressed a lot sometimes, and the truth is I don't feel like going out and I don't take them out and I forget to bathe them or.",
+      "texto_es": "A veces me piden ir al parque y y y yo me siento cansada y y me deprimo a veces mucho y la verdad es que no me dan ganas de salir y no lo saco y se me olvida bañarlos o."
+    },
+    {
+      "fin": "11:51",
+      "hablante": "Profesional",
+      "inicio": "11:45",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, sometimes you don't cook healthy for them, you don't take them to the park. Okay.",
+      "texto_es": "Okay. Entonces, a veces no les cocinas saludable, no los llevas al parque. Okay."
+    },
+    {
+      "fin": "11:57",
+      "hablante": "Profesional",
+      "inicio": "11:51",
+      "rol": "Profesional",
+      "texto_en": "Anything else that makes you think that you're not doing well and that they would be better off without you?",
+      "texto_es": "¿Algo más que te haga pensar que no lo estás haciendo bien y que ellos estarían mejor sin ti?"
+    },
+    {
+      "fin": "12:02",
+      "hablante": "Paciente",
+      "inicio": "11:59",
+      "rol": "Paciente",
+      "texto_en": "Well, maybe that maybe they would be better off with my mother.",
+      "texto_es": "Pues a lo mejor, que tal vez estarían mejor con mi mamá."
+    },
+    {
+      "fin": "12:11",
+      "hablante": "Paciente",
+      "inicio": "12:04",
+      "rol": "Paciente",
+      "texto_en": "I feel that the environment with her is much more beneficial and they would be She would cook for them.",
+      "texto_es": "Siento que el ambiente con ella es mucho más benéfico y estarían Ella sí les cocinaría."
+    },
+    {
+      "fin": "12:14",
+      "hablante": "Paciente",
+      "inicio": "12:13",
+      "rol": "Paciente",
+      "texto_en": "Or she would take them to the park.",
+      "texto_es": "O los llevaría al parque."
+    },
+    {
+      "fin": "12:18",
+      "hablante": "Profesional",
+      "inicio": "12:15",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, like she would do those things.",
+      "texto_es": "Okay. Entonces, como que ella sí haría esas cosas."
+    },
+    {
+      "fin": "12:29",
+      "hablante": "Profesional",
+      "inicio": "12:20",
+      "rol": "Profesional",
+      "texto_en": "And what else about you could lead you to that conclusion that they would be better off without you?",
+      "texto_es": "¿Y qué más acerca de ti podría ser te podría llevar a esa conclusión de que de que estarían mejor sin sin ti?"
+    },
+    {
+      "fin": "12:34",
+      "hablante": "Paciente",
+      "inicio": "12:31",
+      "rol": "Paciente",
+      "texto_en": "They shouldn't have a lesbian mother.",
+      "texto_es": "Ellos no deberían de tener una mamá lesbiana."
+    },
+    {
+      "fin": "12:35",
+      "hablante": "Profesional",
+      "inicio": "12:35",
+      "rol": "Profesional",
+      "texto_en": "Okay.",
+      "texto_es": "Okay."
+    },
+    {
+      "fin": "12:44",
+      "hablante": "Paciente",
+      "inicio": "12:39",
+      "rol": "Paciente",
+      "texto_en": "Sometimes I think my mom is right and that I'm hurting them with all this that I am.",
+      "texto_es": "A veces pienso que mi mamá tiene razón y que les hago daño con todo esto que que soy yo."
+    },
+    {
+      "fin": "12:46",
+      "hablante": "Profesional",
+      "inicio": "12:45",
+      "rol": "Profesional",
+      "texto_en": "Okay.",
+      "texto_es": "Okay."
+    },
+    {
+      "fin": "12:54",
+      "hablante": "Paciente",
+      "inicio": "12:46",
+      "rol": "Paciente",
+      "texto_en": "And that in the end I'm hurting them. And then, I'm fighting with my partner in front of them and they hear the screams.",
+      "texto_es": "Y que al final de cuentas les estoy haciendo daño. Y luego, me estoy peleando con mi pareja enfrente de ellos y ellos escuchan los gritos."
+    },
+    {
+      "fin": "13:02",
+      "hablante": "Paciente",
+      "inicio": "12:55",
+      "rol": "Paciente",
+      "texto_en": "Or that I drink in front of them and that's not right. They shouldn't be seeing that. It's not.",
+      "texto_es": "O que tomo enfrente de ellos y eso no está bien. Ellos no no deberían de estar viendo eso. No es."
+    },
+    {
+      "fin": "13:09",
+      "hablante": "Profesional",
+      "inicio": "13:03",
+      "rol": "Profesional",
+      "texto_en": "So, the fact that you have a female partner, you consider that to be I think that's not right.",
+      "texto_es": "Entonces, el hecho que tú tengas pareja mujer consideras que eso es Yo creo que eso no está bien."
+    },
+    {
+      "fin": "13:12",
+      "hablante": "Paciente",
+      "inicio": "13:10",
+      "rol": "Paciente",
+      "texto_en": "That they see it, I don't know.",
+      "texto_es": "Que ellos lo vean, no sé."
+    },
+    {
+      "fin": "13:15",
+      "hablante": "Paciente",
+      "inicio": "13:13",
+      "rol": "Paciente",
+      "texto_en": "They should have their father.",
+      "texto_es": "Deberían de tener a su papá."
+    },
+    {
+      "fin": "13:18",
+      "hablante": "Profesional",
+      "inicio": "13:16",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, like you would be a bad example.",
+      "texto_es": "Okay. Entonces, como que serías un mal ejemplo."
+    },
+    {
+      "fin": "13:20",
+      "hablante": "Paciente",
+      "inicio": "13:19",
+      "rol": "Paciente",
+      "texto_en": "Yes, I feel like I'm a bad example.",
+      "texto_es": "Sí, siento que soy un mal ejemplo."
+    },
+    {
+      "fin": "13:33",
+      "hablante": "Profesional",
+      "inicio": "13:22",
+      "rol": "Profesional",
+      "texto_en": "Okay. Well, then you are giving me the reasons why you think your children would be better off without you. Now that I have given you a little more of that side, I would like us to explore together to see if there is something that could indicate that your children are better off with you.",
+      "texto_es": "Bueno, entonces ya me estás dando las razones por las cuales crees que tus hijos estarían mejor sin ti. Ahora, ya que te di un poquito más ese lado, me gustaría que entre los dos exploremos a ver si existe algo que nos podría indicar que tus hijos están mejor contigo."
+    },
+    {
+      "fin": "13:47",
+      "hablante": "Profesional",
+      "inicio": "13:42",
+      "rol": "Profesional",
+      "texto_en": "So, if I ask you, is there any evidence that could indicate that your children would be better off with you and not with your mother?",
+      "texto_es": "Entonces, si te pregunto, ¿hay algún tipo de evidencia que nos podría indicar que tus hijos estarían mejor contigo y no con tu mamá?"
+    },
+    {
+      "fin": "13:55",
+      "hablante": "Paciente",
+      "inicio": "13:55",
+      "rol": "Paciente",
+      "texto_en": "I don't know.",
+      "texto_es": "No sé."
+    },
+    {
+      "fin": "14:00",
+      "hablante": "Profesional",
+      "inicio": "13:59",
+      "rol": "Profesional",
+      "texto_en": "Nothing comes to mind?",
+      "texto_es": "¿No se te ocurre mucho?"
+    },
+    {
+      "fin": "14:05",
+      "hablante": "Paciente",
+      "inicio": "14:02",
+      "rol": "Paciente",
+      "texto_en": "When they get sick, I take them to the doctor.",
+      "texto_es": "Cuando se enferman, yo los llevo al médico."
+    },
+    {
+      "fin": "14:10",
+      "hablante": "Profesional",
+      "inicio": "14:05",
+      "rol": "Profesional",
+      "texto_en": "Okay, well. That's one. Anything else? I don't know, for example, who supports them?",
+      "texto_es": "Okay, vale. Esa es una. ¿Algo más? No sé, por ejemplo, ¿quién los mantiene?"
+    },
+    {
+      "fin": "14:12",
+      "hablante": "Paciente",
+      "inicio": "14:11",
+      "rol": "Paciente",
+      "texto_en": "I do.",
+      "texto_es": "Yo."
+    },
+    {
+      "fin": "14:22",
+      "hablante": "Profesional",
+      "inicio": "14:13",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, all their things, food, toys, etc., I buy them. Everything they have is because you buy it for them.",
+      "texto_es": "Okay. Entonces, todas sus cosas, alimentos, juguetes, etcétera, yo los compro. Todo lo que tienen ellos es porque tú se los compras."
+    },
+    {
+      "fin": "14:29",
+      "hablante": "Paciente",
+      "inicio": "14:23",
+      "rol": "Paciente",
+      "texto_en": "Once my son got sick and I missed work and I was with him all day, I didn't leave his side.",
+      "texto_es": "Una vez mi hijo se enfermó y falté al trabajo y estuve con él todo el día, no me despegué."
+    },
+    {
+      "fin": "14:36",
+      "hablante": "Profesional",
+      "inicio": "14:31",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, you are their support and you take care of them when they get sick.",
+      "texto_es": "Okay. Entonces, eres su sustento y los cuidas cuando se enferman."
+    },
+    {
+      "fin": "14:54",
+      "hablante": "Profesional",
+      "inicio": "14:37",
+      "rol": "Profesional",
+      "texto_en": "Okay, what else do I want to ask you? For example, we could explore, you and I, a specific reason why it would not be a good idea for them to live with your mother, that is, specifically, what about my mother would make me think, 'Mmm, I don't like my children living with her' in particular?",
+      "texto_es": "Okay, ¿qué más te quiero preguntar? Por ejemplo, podríamos explorar tú y yo alguna razón en específico por la cual no sería buena idea que vivan con tu mamá, o sea, en concreto, ¿qué de mi mamá me haría pensar, 'Mmm, no, no me encanta que mis hijos vivan con ella' en particular?"
+    },
+    {
+      "fin": "14:58",
+      "hablante": "Paciente",
+      "inicio": "14:54",
+      "rol": "Paciente",
+      "texto_en": "Well, it's just that she's not very affectionate, she's very cold.",
+      "texto_es": "Pues es que no es tan cariñosa, ella es muy fría."
+    },
+    {
+      "fin": "15:01",
+      "hablante": "Profesional",
+      "inicio": "14:59",
+      "rol": "Profesional",
+      "texto_en": "Aha. You've told me that repeatedly.",
+      "texto_es": "Ajá. Me lo has dicho repetidamente."
+    },
+    {
+      "fin": "15:04",
+      "hablante": "Paciente",
+      "inicio": "15:01",
+      "rol": "Paciente",
+      "texto_en": "And she is she is very strict.",
+      "texto_es": "Y ella es es muy dura."
+    },
+    {
+      "fin": "15:16",
+      "hablante": "Paciente",
+      "inicio": "15:05",
+      "rol": "Paciente",
+      "texto_en": "I always wanted her to be affectionate with me and to hug me, but but she never did it and I don't know if that would be good for my children.",
+      "texto_es": "Yo siempre quise que fuera cariñosa conmigo y que me abrazara, pero pero ella nunca lo hizo y no sé si a mis hijos les hiciera bien eso."
+    },
+    {
+      "fin": "15:22",
+      "hablante": "Profesional",
+      "inicio": "15:17",
+      "rol": "Profesional",
+      "texto_en": "Being with a person who is who is cold and who is strict.",
+      "texto_es": "El estar con una persona que sea que sea fría y que sea dura."
+    },
+    {
+      "fin": "15:24",
+      "hablante": "Profesional",
+      "inicio": "15:23",
+      "rol": "Profesional",
+      "texto_en": "Anything else?",
+      "texto_es": "¿Algo más?"
+    },
+    {
+      "fin": "15:30",
+      "hablante": "Paciente",
+      "inicio": "15:28",
+      "rol": "Paciente",
+      "texto_en": "My mother distresses me so much.",
+      "texto_es": "Me angustia tanto mi mamá."
+    },
+    {
+      "fin": "15:38",
+      "hablante": "Paciente",
+      "inicio": "15:32",
+      "rol": "Paciente",
+      "texto_en": "I think I'm more worried, I'm more worried that they'll be at my mother's house because my uncle goes there a lot.",
+      "texto_es": "Creo que me preocupa más, me preocupa más que estén en casa de mi mamá por mi porque ahí va mucho mi tío."
+    },
+    {
+      "fin": "15:40",
+      "hablante": "Profesional",
+      "inicio": "15:39",
+      "rol": "Profesional",
+      "texto_en": "And what about your uncle?",
+      "texto_es": "¿Y qué pasa con tu tío?"
+    },
+    {
+      "fin": "15:44",
+      "hablante": "Paciente",
+      "inicio": "15:42",
+      "rol": "Paciente",
+      "texto_en": "This is something I've never told anyone.",
+      "texto_es": "Esto es algo que nunca le he contado a nadie."
+    },
+    {
+      "fin": "15:58",
+      "hablante": "Paciente",
+      "inicio": "15:49",
+      "rol": "Paciente",
+      "texto_en": "But, well, my uncle abused me when I was little and I'm worried that now he might be close to my daughter.",
+      "texto_es": "Pero pues mi tío abusaba de mí cuando yo era chica y me preocupa que ahora se pueda pueda estar cerca de mi hija."
+    },
+    {
+      "fin": "16:09",
+      "hablante": "Profesional",
+      "inicio": "16:03",
+      "rol": "Profesional",
+      "texto_en": "I'm glad you had the confidence to tell me, because I know it's not easy to talk about this, and and well, it's not simple. But I have to ask you, how old were you when this happened?",
+      "texto_es": "Qué bueno que tuviste la confianza de decirme, porque yo sé que no es fácil hablar de esto, y y bueno, no es sencillo. Pero te tengo que preguntar, ¿qué edad tenías cuando esto pasó?"
+    },
+    {
+      "fin": "16:13",
+      "hablante": "Paciente",
+      "inicio": "16:12",
+      "rol": "Paciente",
+      "texto_en": "7 years old.",
+      "texto_es": "7 años."
+    },
+    {
+      "fin": "16:15",
+      "hablante": "Profesional",
+      "inicio": "16:14",
+      "rol": "Profesional",
+      "texto_en": "And was it once or was it repeated?",
+      "texto_es": "¿Y fue una vez o fue repetido?"
+    },
+    {
+      "fin": "16:19",
+      "hablante": "Paciente",
+      "inicio": "16:17",
+      "rol": "Paciente",
+      "texto_en": "Well, from 7 to 9.",
+      "texto_es": "Pues desde los 7 hasta los 9."
+    },
+    {
+      "fin": "16:34",
+      "hablante": "Paciente",
+      "inicio": "16:22",
+      "rol": "Paciente",
+      "texto_en": "And as I grew up, I tried to stay away from him and but I know he goes to my mother's house constantly and it makes me very anxious to think that he could be in contact with my daughter. No.",
+      "texto_es": "Y mientras fui creciendo, traté como de mantenerme alejada de él y pero yo sé que él va constantemente a casa de mi mamá y me angustia mucho pensar que puede estar en contacto con mi hija. No."
+    },
+    {
+      "fin": "16:39",
+      "hablante": "Profesional",
+      "inicio": "16:35",
+      "rol": "Profesional",
+      "texto_en": "Did you tell anyone when you were little, did you tell anyone what happened?",
+      "texto_es": "¿Tú le dijiste algo cuando cuando eras chico, le dijiste a alguien lo que pasó?"
+    },
+    {
+      "fin": "16:40",
+      "hablante": "Paciente",
+      "inicio": "16:39",
+      "rol": "Paciente",
+      "texto_en": "I told my mom.",
+      "texto_es": "Le dije a mi mamá."
+    },
+    {
+      "fin": "16:41",
+      "hablante": "Profesional",
+      "inicio": "16:40",
+      "rol": "Profesional",
+      "texto_en": "Okay. And what did your mom tell you?",
+      "texto_es": "Okay. ¿Y qué te dijo tu mamá?"
+    },
+    {
+      "fin": "16:49",
+      "hablante": "Paciente",
+      "inicio": "16:42",
+      "rol": "Paciente",
+      "texto_en": "She didn't believe me, she said I was crazy. She said her brother was incapable of doing that and and that if I told anyone, she would hit me.",
+      "texto_es": "No me creyó, dijo que estaba loca. Dijo que su hermano era incapaz de hacer eso y y que si yo decía alguien, me iba a golpear."
+    },
+    {
+      "fin": "17:06",
+      "hablante": "Profesional",
+      "inicio": "16:51",
+      "rol": "Profesional",
+      "texto_en": "Well, what you are telling me is terrible. I can't imagine how hard it was as a child not to receive the support you needed at that moment. Very difficult, right?",
+      "texto_es": "Pues es que es terrible lo que me estás diciendo. No puedo imaginar lo duro de niña, no recibir el apoyo que necesitabas en ese momento. Fue muy difícil, ¿no?"
+    },
+    {
+      "fin": "17:08",
+      "hablante": "Paciente",
+      "inicio": "17:08",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "17:15",
+      "hablante": "Profesional",
+      "inicio": "17:10",
+      "rol": "Profesional",
+      "texto_en": "So, based on what you are telling me, what did you need from your mom?",
+      "texto_es": "Entonces, en base a lo que me estás diciendo, ¿qué es lo que tú necesitabas de tu mamá?"
+    },
+    {
+      "fin": "17:21",
+      "hablante": "Paciente",
+      "inicio": "17:18",
+      "rol": "Paciente",
+      "texto_en": "To protect me from him.",
+      "texto_es": "Que me protegiera de él."
+    },
+    {
+      "fin": "17:23",
+      "hablante": "Profesional",
+      "inicio": "17:22",
+      "rol": "Profesional",
+      "texto_en": "What else did you need from your mom?",
+      "texto_es": "¿Qué más necesitabas de tu mamá?"
+    },
+    {
+      "fin": "17:34",
+      "hablante": "Paciente",
+      "inicio": "17:27",
+      "rol": "Paciente",
+      "texto_en": "To treat me with affection, to hug me. You needed her to hug you. To treat you with affection.",
+      "texto_es": "Que me tratara con cariño, que me abrazara. Necesitabas que te abrazara. Te tratara con cariño."
+    },
+    {
+      "fin": "17:46",
+      "hablante": "Profesional",
+      "inicio": "17:37",
+      "rol": "Profesional",
+      "texto_en": "Okay. So, answer this question for me. Of the whole world, who is the person who will protect your children with the most force?",
+      "texto_es": "Okay. Entonces, contéstame esta pregunta. De todo el mundo, ¿quién es la persona que va a proteger con más fuerza a tus hijos?"
+    },
+    {
+      "fin": "17:47",
+      "hablante": "Paciente",
+      "inicio": "17:47",
+      "rol": "Paciente",
+      "texto_en": "Me.",
+      "texto_es": "Yo."
+    },
+    {
+      "fin": "17:53",
+      "hablante": "Profesional",
+      "inicio": "17:48",
+      "rol": "Profesional",
+      "texto_en": "Who is the person who loves your children the most in the whole planet?",
+      "texto_es": "¿Quién es la persona que más quiere a tus hijos en todo el planeta?"
+    },
+    {
+      "fin": "17:53",
+      "hablante": "Paciente",
+      "inicio": "17:53",
+      "rol": "Paciente",
+      "texto_en": "Me.",
+      "texto_es": "Yo."
+    },
+    {
+      "fin": "18:07",
+      "hablante": "Profesional",
+      "inicio": "17:56",
+      "rol": "Profesional",
+      "texto_en": "So, if they lose the person who loves them the most on the planet and who will protect them with the most force, how does that fit with them being better off without you?",
+      "texto_es": "Entonces, si ellos pierden a la persona que más los quiere en el planeta y que los va a proteger con más fuerza, ¿cómo encaja en que van a estar mejor sin ti?"
+    },
+    {
+      "fin": "18:11",
+      "hablante": "Paciente",
+      "inicio": "18:10",
+      "rol": "Paciente",
+      "texto_en": "I don't know.",
+      "texto_es": "No sé."
+    },
+    {
+      "fin": "18:12",
+      "hablante": "Profesional",
+      "inicio": "18:11",
+      "rol": "Profesional",
+      "texto_en": "It doesn't fit, right?",
+      "texto_es": "¿No encaja, verdad?"
+    },
+    {
+      "fin": "18:14",
+      "hablante": "Paciente",
+      "inicio": "18:13",
+      "rol": "Paciente",
+      "texto_en": "No.",
+      "texto_es": "No."
+    },
+    {
+      "fin": "18:32",
+      "hablante": "Profesional",
+      "inicio": "18:16",
+      "rol": "Profesional",
+      "texto_en": "Because what is more important to them? Having a person who makes them good food and bathes them every day but who doesn't love them and doesn't protect them, or a person who loves them, gives them affection, and protects them?",
+      "texto_es": "Porque ¿qué es más importante para ellos? ¿El tener una persona que les haga bien la comidita y los bañe todos los días pero que no los quiera y que no los proteja o una persona que los quiera, les dé cariño y que los proteja?"
+    },
+    {
+      "fin": "18:35",
+      "hablante": "Paciente",
+      "inicio": "18:33",
+      "rol": "Paciente",
+      "texto_en": "It is better that they are protected and that they are loved.",
+      "texto_es": "Es mejor que los proteja y que los quiera."
+    },
+    {
+      "fin": "18:43",
+      "hablante": "Profesional",
+      "inicio": "18:35",
+      "rol": "Profesional",
+      "texto_en": "Because you already lived it. So, if I ask you, nobody is going to tell you, you already lived it. If you could go back in time, what would you prefer?",
+      "texto_es": "Porque tú ya lo viviste. Entonces, si te pregunto, nadie te lo va a platicar, tú ya lo viviste. Si tú pudieras regresar en el tiempo, ¿qué preferirías?"
+    },
+    {
+      "fin": "18:52",
+      "hablante": "Profesional",
+      "inicio": "18:43",
+      "rol": "Profesional",
+      "texto_en": "A mother who follows the religion well and everything is clean and everything is cooked as it should be, but who reacts like that when there is abuse?",
+      "texto_es": "¿Una mamá que siga bien la religión y que todo limpio y todo cocinado como debe ser, pero que reaccione así cuando hay un abuso?"
+    },
+    {
+      "fin": "18:56",
+      "hablante": "Paciente",
+      "inicio": "18:53",
+      "rol": "Paciente",
+      "texto_en": "No, I, one who loves them and protects them.",
+      "texto_es": "No, yo, una que los quiere y que los proteja."
+    },
+    {
+      "fin": "18:59",
+      "hablante": "Profesional",
+      "inicio": "18:56",
+      "rol": "Profesional",
+      "texto_en": "Exactly. Exactly.",
+      "texto_es": "Exacto. Exacto."
+    },
+    {
+      "fin": "19:04",
+      "hablante": "Profesional",
+      "inicio": "19:00",
+      "rol": "Profesional",
+      "texto_en": "What conclusion could we reach about whether your children will be better off without you?",
+      "texto_es": "¿A qué conclusión podríamos llegar acerca de si tus hijos van a estar mejor sin ti?"
+    },
+    {
+      "fin": "19:08",
+      "hablante": "Paciente",
+      "inicio": "19:06",
+      "rol": "Paciente",
+      "texto_en": "I think they will be better off with me.",
+      "texto_es": "Que creo que estarán mejor conmigo."
+    },
+    {
+      "fin": "19:12",
+      "hablante": "Profesional",
+      "inicio": "19:10",
+      "rol": "Profesional",
+      "texto_en": "Yes, I'm glad to hear that.",
+      "texto_es": "Sí, me da gusto escuchar eso."
+    },
+    {
+      "fin": "19:21",
+      "hablante": "Profesional",
+      "inicio": "19:12",
+      "rol": "Profesional",
+      "texto_en": "So, if I ask you from 0 to 100, how much do you still believe in this thought, now that we have considered both the evidence for and the evidence against?",
+      "texto_es": "Entonces, si te pregunto del 0 al 100, ¿qué tanto sigues creyendo en este pensamiento, ahorita que consideramos tanto la evidencia a favor como la evidencia en contra?"
+    },
+    {
+      "fin": "19:32",
+      "hablante": "Profesional",
+      "inicio": "19:21",
+      "rol": "Profesional",
+      "texto_en": "And we are discovering those factors that you provide them with protection, you provide them with affection. How much do you still believe that they will be better off without you, from 0 to 100?",
+      "texto_es": "Y esos factores nos estamos descubriendo de que tú les brindas protección, les brindas cariño. ¿Qué tanto sigues creyendo que ellos van a estar mejor sin ti, del 0 al 100?"
+    },
+    {
+      "fin": "19:34",
+      "hablante": "Paciente",
+      "inicio": "19:33",
+      "rol": "Paciente",
+      "texto_en": "40%.",
+      "texto_es": "40%."
+    },
+    {
+      "fin": "19:35",
+      "hablante": "Profesional",
+      "inicio": "19:34",
+      "rol": "Profesional",
+      "texto_en": "Okay.",
+      "texto_es": "Okay."
+    },
+    {
+      "fin": "19:42",
+      "hablante": "Paciente",
+      "inicio": "19:36",
+      "rol": "Paciente",
+      "texto_en": "I think I think I don't want them to go with my mom anymore. I think I want them to stay with me.",
+      "texto_es": "Creo que creo que ya no quiero que se vayan con mi mamá. Creo que quiero que se queden conmigo."
+    },
+    {
+      "fin": "19:46",
+      "hablante": "Profesional",
+      "inicio": "19:45",
+      "rol": "Profesional",
+      "texto_en": "How do you feel at this moment?",
+      "texto_es": "¿Cómo te sientes en este momento?"
+    },
+    {
+      "fin": "19:48",
+      "hablante": "Paciente",
+      "inicio": "19:47",
+      "rol": "Paciente",
+      "texto_en": "Calmer.",
+      "texto_es": "Más tranquila."
+    },
+    {
+      "fin": "19:53",
+      "hablante": "Profesional",
+      "inicio": "19:50",
+      "rol": "Profesional",
+      "texto_en": "Okay. And I ask you very directly, the desire to die?",
+      "texto_es": "Okay. Y te pregunto muy directamente, ¿la ganas de morirte?"
+    },
+    {
+      "fin": "19:56",
+      "hablante": "Paciente",
+      "inicio": "19:55",
+      "rol": "Paciente",
+      "texto_en": "They went down a little.",
+      "texto_es": "Ya bajaron un poco."
+    },
+    {
+      "fin": "20:09",
+      "hablante": "Paciente",
+      "inicio": "19:59",
+      "rol": "Paciente",
+      "texto_en": "But I am left a lot with this idea of being a failure. It costs me a bit of work not to think it.",
+      "texto_es": "Pero me quedo mucho con esta idea de de de ser un fracaso. Me cuesta un poco de trabajo como no pensarlo."
+    },
+    {
+      "fin": "20:17",
+      "hablante": "Profesional",
+      "inicio": "20:10",
+      "rol": "Profesional",
+      "texto_en": "and that is totally understood. I know that talking about it will not completely erase all those feelings.",
+      "texto_es": "Lo, y eso es totalmente entendido. Yo sé que platicándolo no se va a borrar absolutamente todo, todos esos sentimiento."
+    },
+    {
+      "fin": "20:47",
+      "hablante": "Profesional",
+      "inicio": "20:18",
+      "rol": "Profesional",
+      "texto_en": "But I want to, as a way to help, because you have done a good job right now, I am very happy with you, the fact that we resumed a component of what makes you depressed, that we found that this problem of custody, of whether or not I stay with my children, well, it naturally makes you feel bad. And what we found between you and me, what underlies that problem is this idea that your children will be better off without you, which you believed a lot. But what you and I remembered is that situations do not determine emotions, that thoughts are what make us feel that way.",
+      "texto_es": "Pero quiero que, como para ayudar, porque has hecho un buen trabajo ahorita, estoy muy contento contigo, el hecho de que retomamos componente de lo que te tiene deprimida, que encontramos que este pensando, este problema de la custodia no me quedo no con mis hijos, pues te tiene mal naturalmente. Y lo que entre tú y yo encontramos, que lo que subyace a ese problema es esta idea de que tus hijos van a estar mejor sin ti, que lo creías mucho. Pero lo que recordamos tú y yo es que las situaciones no determinan las emociones, que son los pensamientos los que hacen que nos vamos a sentir de esa forma."
+    },
+    {
+      "fin": "21:05",
+      "hablante": "Profesional",
+      "inicio": "20:48",
+      "rol": "Profesional",
+      "texto_en": "We focused on evaluating this thought of 'my children will be better off without me,' and we found that while there was some evidence that supported that idea, there was also a lot of powerful counter-evidence that you protect them, you love them, that that did not fit with that idea.",
+      "texto_es": "Nos enfocamos en evaluar este pensamiento de 'mis hijos van a estar mejor sin mí', y encontramos que mientras que sí había algo de evidencia que apoyaba a esa idea, también había mucha evidencia en contra poderosa que como que tú los proteges, los quieres, que que no que no encajaba con esa con esa idea."
+    },
+    {
+      "fin": "21:27",
+      "hablante": "Profesional",
+      "inicio": "21:05",
+      "rol": "Profesional",
+      "texto_en": "But even so, I understand that the feeling still remains. So, I would like us to do something that I call resolving the thought with a behavior. What does that mean? That if you feel bad about a thought, you have to act in the opposite way. So, if you feel bad right now about this failure as a mother, we are going to act—now we are going to talk about actions—in the opposite way.",
+      "texto_es": "Pero aún así entiendo que todavía permanezca el sentimiento. Entonces, me gustaría que que hagamos algo que yo le llamo resolver el pensamiento con una conducta. ¿Qué significa eso? Que si te sientes mal por algún pensamiento, hay que actuar de la forma opuesta. Entonces, si tú te sientes ahorita mal por esto como fracaso como madre, vamos a actuar—ahorita vamos a hablar de acciones—de forma opuesta."
+    },
+    {
+      "fin": "21:31",
+      "hablante": "Profesional",
+      "inicio": "21:27",
+      "rol": "Profesional",
+      "texto_en": "So, if you were the mother you want to be, what would you do this week?",
+      "texto_es": "Entonces, si tú fueras la mamá que quieres ser, ¿qué harías en esta semana?"
+    },
+    {
+      "fin": "21:34",
+      "hablante": "Paciente",
+      "inicio": "21:32",
+      "rol": "Paciente",
+      "texto_en": "I think I would take them to the park.",
+      "texto_es": "Creo que los llevaría al parque."
+    },
+    {
+      "fin": "21:37",
+      "hablante": "Profesional",
+      "inicio": "21:34",
+      "rol": "Profesional",
+      "texto_en": "Take them to the park, good. What else would Supermom do?",
+      "texto_es": "Llevar al parque, bien. ¿Qué más haría Supermamá?"
+    },
+    {
+      "fin": "21:38",
+      "hablante": "Paciente",
+      "inicio": "21:37",
+      "rol": "Paciente",
+      "texto_en": "Cook well for them.",
+      "texto_es": "Cocinarles bien."
+    },
+    {
+      "fin": "21:44",
+      "hablante": "Profesional",
+      "inicio": "21:40",
+      "rol": "Profesional",
+      "texto_en": "Hug them a lot. Hug them a lot, good.",
+      "texto_es": "Abrazarlos mucho. Abrazarlos mucho, bien."
+    },
+    {
+      "fin": "22:10",
+      "hablante": "Profesional",
+      "inicio": "21:44",
+      "rol": "Profesional",
+      "texto_en": "So, what do you think if we set that as homework? I mean, the last one I don't think I have to assign to you, I think you do it automatically. But what do you think if we assign as homework dedicating more time to them? I know depression is difficult, but we want to solve that feeling with behavior too. So, we could, well, dedicate more time to them by taking them to the park, taking a little more care of their diet. Would you add not drinking at home? Would you agree with that?",
+      "texto_es": "Entonces, ¿qué te parece si lo ponemos eso como tarea? Digo, el último creo que no te lo tengo que asignar, creo que lo haces en automático. Pero ¿qué te parece si si como tarea asignamos el dedicarles más tiempo? Yo sé que la depresión es difícil, pero queremos resolver ese sentimiento también con conducta. Entonces, podríamos eh pues dedicarles más tiempo llevándolos al parque, cuidando un poquito más su alimentación. Le agregarían o tomar en la casa. ¿Estarías de acuerdo con eso?"
+    },
+    {
+      "fin": "22:11",
+      "hablante": "Paciente",
+      "inicio": "22:11",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "22:14",
+      "hablante": "Profesional",
+      "inicio": "22:12",
+      "rol": "Profesional",
+      "texto_en": "I mean, it's easier said than done, but...",
+      "texto_es": "Digo, es más fácil decirlo que hacerlo, pero"
+    },
+    {
+      "fin": "22:18",
+      "hablante": "Paciente",
+      "inicio": "22:14",
+      "rol": "Paciente",
+      "texto_en": "But I can I can I can make an effort for them.",
+      "texto_es": "Pero puedo puedo puedo hacer un esfuerzo por ellos."
+    },
+    {
+      "fin": "22:28",
+      "hablante": "Profesional",
+      "inicio": "22:18",
+      "rol": "Profesional",
+      "texto_en": "Perfect. So, as a summary, what I would like to leave as homework is, one, to remember a little bit what we talked about today, about this thought of 'my children are better off without me' and remember what we talked about today.",
+      "texto_es": "Perfecto. Entonces, como resumen, lo que me gustaría eh dejar como de tarea es, o sea, uno es recordar un poco lo que hemos platicado el día de hoy, acerca de este pensamiento de 'mis hijos están mejor sin mí' y recordar lo que platicamos el día de hoy."
+    },
+    {
+      "fin": "22:42",
+      "hablante": "Profesional",
+      "inicio": "22:35",
+      "rol": "Profesional",
+      "texto_en": "That that thought is not accurate, that your children are going to be better off with you, because you are the one who loves them the most and the one who protects them the most.",
+      "texto_es": "Que ese pensamiento no no es certero, que tus hijos van a estar mejor contigo, porque tú eres quien más los quieres y quien más lo proteges."
+    },
+    {
+      "fin": "22:58",
+      "hablante": "Profesional",
+      "inicio": "22:43",
+      "rol": "Profesional",
+      "texto_en": "And that yes, there are things that we can improve as a mother and we are going to focus on that. Rome was not built in a day, so we are going to take them to the park a little more, and we are going to dedicate a little more time to them and we are even going to cook well for them, right? So we are going to do all those things.",
+      "texto_es": "Y que sí, hay cosas que que podemos mejorar como mamá y vamos a enfocarnos a eso. La Roma no se hizo en un día, entonces vamos a llevarlos al parque un poquito más, y vamos a dedicarles un poquito más de tiempo y hasta les vamos a cocinar chido, ¿no? Entonces vamos a hacer todas esas esas cosas."
+    },
+    {
+      "fin": "23:01",
+      "hablante": "Profesional",
+      "inicio": "22:58",
+      "rol": "Profesional",
+      "texto_en": "So, could you commit to doing that as homework?",
+      "texto_es": "Entonces, ¿podrías comprometerte a hacer eso como como tarea?"
+    },
+    {
+      "fin": "23:03",
+      "hablante": "Paciente",
+      "inicio": "23:01",
+      "rol": "Paciente",
+      "texto_en": "Yes, yes, I can commit.",
+      "texto_es": "Sí, sí puedo comprometerme."
+    },
+    {
+      "fin": "23:09",
+      "hablante": "Profesional",
+      "inicio": "23:04",
+      "rol": "Profesional",
+      "texto_en": "Okay, excellent. Now, I would like to ask you how you feel about what we have talked about today.",
+      "texto_es": "Okay, excelente. Ahora, me gustaría preguntarte ¿cómo te sientes con lo que hemos platicado hoy?"
+    },
+    {
+      "fin": "23:11",
+      "hablante": "Paciente",
+      "inicio": "23:10",
+      "rol": "Paciente",
+      "texto_en": "I feel calmer.",
+      "texto_es": "Me siento más tranquila."
+    },
+    {
+      "fin": "23:24",
+      "hablante": "Paciente",
+      "inicio": "23:14",
+      "rol": "Paciente",
+      "texto_en": "I still have in my head like these ideas that my mom makes me feel, but, but I feel much calmer.",
+      "texto_es": "Me todavía tengo en la cabeza como estas ideas que me de mi mamá, pero, pero me siento mucho más tranquila."
+    },
+    {
+      "fin": "23:36",
+      "hablante": "Paciente",
+      "inicio": "23:25",
+      "rol": "Paciente",
+      "texto_en": "Yes, I feel a little uncomfortable and strange for having told you about this thing about wanting to commit suicide. I think I wouldn't like you to think I'm crazy.",
+      "texto_es": "Sí, me siento un poco incómoda y rara por haberte contado esto de lo de que me quise suicidar. Creo que no me gustaría que pensaras que estoy loca."
+    },
+    {
+      "fin": "23:53",
+      "hablante": "Profesional",
+      "inicio": "23:37",
+      "rol": "Profesional",
+      "texto_en": "No, no, not at all, look, I don't think that. The truth is that if a person thinks 'my children would be better off without me,' like, 'I'm doing harm to my children,' to a certain degree it makes sense to, I mean, to think about dying.",
+      "texto_es": "No, no, para nada, mira, no pienso eso. La verdad es que si una persona piensa 'mis hijos estarían mejor sin mí', tipo, 'como que estoy haciendo un daño a mis hijos', hasta cierto grado tiene sentido el o sea, el pensar en en morirse."
+    },
+    {
+      "fin": "24:11",
+      "hablante": "Profesional",
+      "inicio": "23:54",
+      "rol": "Profesional",
+      "texto_en": "What we are learning today, I would like you to see it from this angle, is that a reason to die for you is to be a bad mother, but another way to see it is that being a good mother would be a reason to live.",
+      "texto_es": "Lo que estamos aprendiendo el día de hoy, me gustaría que lo veas desde este ángulo, es que una razón para morir para ti es ser mala madre, pero una forma también de verlo es que el ser una buena madre sería una razón para vivir."
+    },
+    {
+      "fin": "24:18",
+      "hablante": "Profesional",
+      "inicio": "24:12",
+      "rol": "Profesional",
+      "texto_en": "When we have thoughts about dying, suicidal ideation as such, that also hides our values.",
+      "texto_es": "Cuando tenemos pensamiento acerca de morirnos, la ideación suicida tal cual, eso también esconde nuestros valores."
+    },
+    {
+      "fin": "24:35",
+      "hablante": "Profesional",
+      "inicio": "24:19",
+      "rol": "Profesional",
+      "texto_en": "So, we have learned today that one of your values is to be a good mother. So, I do want you to see it like this. If something is strong enough to make me want to die, it is also strong enough to make me want to live. So, what is a reason to die, can be a reason to live.",
+      "texto_es": "Entonces, hemos aprendido el día de hoy que uno de tus valores es ser buena madre. Entonces, sí quiero que lo veas así. Si algo es lo suficientemente fuerte como para quererme morir, también es lo suficientemente fuerte como para hacerme vivir. Entonces, lo que es una razón para morir, puede ser una razón para vivir."
+    },
+    {
+      "fin": "25:02",
+      "hablante": "Profesional",
+      "inicio": "24:35",
+      "rol": "Profesional",
+      "texto_en": "And that is where the homework we are leaving fits in a lot, that we have found a value of yours, being a good mother. Those are our values, our needs, our desires, our priorities. So, we are going to focus on this. I am going to help you with that, but this is how I want us to see it. More than a reason to die, we have found a reason to live. And we are going to work on that, because we are seeing, these are your values, your priorities, your desires, and I am going to help you with that. Does that seem right?",
+      "texto_es": "Y ahí es donde encaja mucho la tarea que estamos dejando, de que hemos encontrado un valor tuyo, ser buena madre. Eso es que nuestros valores, nuestras necesidades, nuestros deseos, nuestras prioridades. Entonces, vamos a enfocarnos a esto. Yo te voy a ayudar con eso, pero así es como quiero que lo veamos. Más que una razón para morir, hemos encontrado una razón para vivir. Y vamos a trabajar en eso, como porque estamos viendo, son tus valores, tus prioridades, tus deseos, y te voy a ayudar con eso. ¿Te parece bien?"
+    },
+    {
+      "fin": "25:03",
+      "hablante": "Paciente",
+      "inicio": "25:03",
+      "rol": "Paciente",
+      "texto_en": "Yes.",
+      "texto_es": "Sí."
+    },
+    {
+      "fin": "25:04",
+      "hablante": "Profesional",
+      "inicio": "25:04",
+      "rol": "Profesional",
+      "texto_en": "Perfect.",
+      "texto_es": "Perfecto."
+    }
+  ],
+  "resumen_clinico": "El paciente busca ayuda para la depresión, identificando tres factores principales: problemas laborales (miedo a ser despedido), conflicto con su novia, y la incertidumbre sobre la custodia de sus hijos, sugerida por su madre. El paciente revela que la mala relación con su madre (fría y crítica, especialmente por su bisexualidad y su pareja mujer) le hace cuestionarse su valía como madre. El problema más angustiante es el de los hijos, alimentado por el pensamiento central de que \"mis hijos estarían mejor sin mí\". Este pensamiento genera una profunda tristeza e ideación suicida. Al explorar este pensamiento, el paciente revela un trauma de abuso sexual infantil por parte de su tío (hermano de la madre), donde su madre no le creyó ni la protegió. Esta revelación lleva al paciente a reevaluar si sus hijos estarían mejor con su madre (fría y dura) o con ella (quien los ama y protege). El paciente concluye que es la persona que más los ama y protegerá, reduciendo su convicción en la idea de que estarían mejor sin ella. Se establece un plan de acción conductual para reforzar su rol como buena madre, dedicando más tiempo, cuidado y afecto a sus hijos.",
+  "roles_identificados": [
+    {
+      "hablante": "Profesional",
+      "rol": "Profesional"
+    },
+    {
+      "hablante": "Paciente",
+      "rol": "Paciente"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+# Archivos de sistema y entorno
+.env
+.DS_Store
+
+# Backend - Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+
+# Carpetas de datos generados (No subir audios ni jsons privados)
+backend/uploads/
+backend/transcriptions/
+backend/visualizations/
+
+# Frontend - Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
