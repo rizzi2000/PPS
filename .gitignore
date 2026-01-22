@@ -1,5 +1,5 @@
 # Archivos de sistema y entorno
-backend/.env
+.env
 .DS_Store
 
 # Backend - Python
