@@ -10,3 +10,9 @@ def time_str_to_seconds(time_str: str) -> float:
         return 0.0
     except ValueError:
         return 0.0
+
+def format_timestamp(seconds: float) -> str:
+    """Convierte segundos float a formato 'MM:SS'."""
+    td_mins = int(seconds // 60)
+    td_secs = int(seconds % 60)
+    return f"{td_mins:02}:{td_secs:02}"
