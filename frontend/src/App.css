@@ -23,15 +23,16 @@ body {
   overflow: hidden;
 }
 
-/* SIDEBAR */
 .sidebar {
-  width: 300px;
+  width: 350px;
   background: var(--bg-panel);
   border-right: 1px solid var(--border);
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100vh; /* Ocupa todo el alto */
+  overflow-y: auto; /* PERMITE SCROLL SI EL RESUMEN ES LARGO */
 }
 
 .brand {
@@ -79,7 +80,15 @@ body {
 .process-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
 
 .clinical-summary h3 { font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-.clinical-summary p { font-size: 0.9rem; line-height: 1.5; }
+.clinical-summary p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Mantiene párrafos */
+  color: var(--text-main);
+  background: #f8fafc;
+  padding: 15px;
+  border-radius: 8px;
+}
 
 .role-badge {
   display: inline-block;
@@ -180,3 +189,7 @@ body {
 .metrics { display: flex; flex-direction: column; gap: 5px; justify-content: center; }
 .warning-badge { background: #fef3c7; color: #b45309; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
 .info-badge { background: #e0f2fe; color: #0369a1; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+
+.riesgo-bajo { color: #22c55e; font-weight: bold; }
+.riesgo-medio { color: #f59e0b; font-weight: bold; }
+.riesgo-alto { color: #ef4444; font-weight: bold; }

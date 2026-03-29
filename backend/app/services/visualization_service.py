@@ -4,7 +4,6 @@ import librosa
 import numpy as np
 from ..utils.time_utils import time_str_to_seconds
 
-# Asegúrate de que las rutas sean correctas (2 niveles atrás)
 VISUALIZATIONS_DIR = os.path.join(os.path.dirname(__file__), "../../visualizations")
 TRANSCRIPTIONS_DIR = os.path.join(os.path.dirname(__file__), "../../transcriptions")
 os.makedirs(VISUALIZATIONS_DIR, exist_ok=True)
@@ -12,79 +11,64 @@ os.makedirs(VISUALIZATIONS_DIR, exist_ok=True)
 def analyze_rhythm(audio_path: str, output_basename: str):
     print(f"--- 📊 Analizando señales físicas: {output_basename} ---")
     
-    # 1. Carga física del audio (Librosa)
+    # Cargamos el audio con librosa
     y, sr = librosa.load(audio_path, sr=None)
-    hop_length = 512
-    frame_length = 2048
-    rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
-    times = librosa.frames_to_time(np.arange(len(rms)), sr=sr, hop_length=hop_length)
+    
+    # Calculamos la energía (RMS) para detectar silencios físicos
+    rms = librosa.feature.rms(y=y)[0]
+    times = librosa.frames_to_time(np.arange(len(rms)), sr=sr)
 
-    # 2. Intentar cargar filtro de IA
+    # Cargar análisis de IA previo
     json_ai_path = os.path.join(TRANSCRIPTIONS_DIR, f"{output_basename}_analysis.json")
-    intervalos_paciente = []
-    usar_filtro = False
-
+    segmentos_interes = []
+    
     if os.path.exists(json_ai_path):
-        try:
-            with open(json_ai_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+        with open(json_ai_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for seg in data.get("dialogo", []):
+                s = time_str_to_seconds(seg.get("inicio", "00:00"))
+                e = time_str_to_seconds(seg.get("fin", "00:00"))
                 
-                # Buscamos segmentos del paciente (ignorando mayúsculas)
-                dialogos = data.get("transcripcion", [])
-                for seg in dialogos:
-                    # Convertimos el rol a minúsculas para comparar
-                    rol = seg.get("rol", "").lower().strip()
-                    
-                    # Aceptamos "paciente" o "patient" por si acaso
-                    if "paciente" in rol or "patient" in rol:
-                        s = time_str_to_seconds(seg.get("inicio", "00:00"))
-                        e = time_str_to_seconds(seg.get("fin", "00:00"))
-                        intervalos_paciente.append((s, e))
-                
-                # SOLO activamos el filtro si realmente encontramos al paciente
-                if len(intervalos_paciente) > 0:
-                    usar_filtro = True
-                    print(f"✅ Filtro IA activado: {len(intervalos_paciente)} segmentos de paciente.")
-                else:
-                    print("⚠️ JSON encontrado pero no se detectó rol 'paciente'. Mostrando todo el audio.")
-                    
-        except Exception as e:
-            print(f"⚠️ Error leyendo JSON de IA: {e}")
-    else:
-        print("ℹ️ No existe análisis de IA previo. Se mostrará todo el audio.")
+                # Guardamos info de CUALQUIER hablante para el gráfico, 
+                # pero identificamos si es paciente o no
+                rol = str(seg.get("rol", "")).lower()
+                segmentos_interes.append({
+                    "rango": (s, e),
+                    "es_paciente": "paciente" in rol,
+                    "fluidez_ia": seg.get("fluidez", "Normal")
+                })
 
-    # 3. Clasificación y Filtrado
     rhythm_data = []
     prev_type = None
     rms_mean = np.mean(rms)
     
     for t, val in zip(times, rms):
-        tipo = "normal"
+        tipo = "silencio" # Por defecto
+        en_segmento = False
         
-        # Lógica de filtro:
-        es_paciente = True
-        if usar_filtro:
-            es_paciente = False
-            for (start, end) in intervalos_paciente:
-                # Damos un margen de error pequeño (0.5s) para que no corte palabras
-                if (start - 0.5) <= t <= (end + 0.5):
-                    es_paciente = True
-                    break
+        for interv in segmentos_interes:
+            start, end = interv["rango"]
+            if (start - 0.1) <= t <= (end + 0.1):
+                en_segmento = True
+                # Lógica de colores/tipos
+                if val < 0.005: 
+                    tipo = "pausa"
+                elif not interv["es_paciente"]:
+                    tipo = "terapeuta" # Color distinto para el terapeuta
+                elif "lenta" in interv["fluidez_ia"].lower() or "bloqueo" in interv["fluidez_ia"].lower():
+                    tipo = "fluidez_alterada"
+                elif val > (rms_mean * 2):
+                    tipo = "acelerado"
+                else:
+                    tipo = "normal_paciente"
+                break
         
-        # Si el filtro dice que no es paciente, marcamos como "ajeno"
-        if not es_paciente:
-            tipo = "ajeno"
-        elif val < 0.01:
-            tipo = "pausa"
-        elif val > (rms_mean * 1.5):
-            tipo = "acelerado"
-        
-        # Compresión: Solo guardamos si cambia el tipo de segmento
+        # Guardar solo cambios de estado (compresión de datos)
         if tipo != prev_type:
             rhythm_data.append({"timestamp": round(float(t), 2), "tipo": tipo})
             prev_type = tipo
 
-    # Guardar
+    # Guardar JSON de ritmo
     out_path = os.path.join(VISUALIZATIONS_DIR, f"{output_basename}_rhythm.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(rhythm_data, f, ensure_ascii=False)
