@@ -30,7 +30,7 @@ def analyze_rhythm(audio_path: str, output_basename: str):
                 data = json.load(f)
                 
                 # Buscamos segmentos del paciente (ignorando mayúsculas)
-                dialogos = data.get("dialogo", [])
+                dialogos = data.get("transcripcion", [])
                 for seg in dialogos:
                     # Convertimos el rol a minúsculas para comparar
                     rol = seg.get("rol", "").lower().strip()

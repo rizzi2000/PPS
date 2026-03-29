@@ -37,10 +37,11 @@ def transcribe_audio(audio_path: str, output_basename: str):
                 "inicio": start_fmt,
                 "fin": end_fmt,
                 "texto": text,
-                "hablante": "Analizando..." 
+                "rol": "Analizando..." 
             })
 
         print("✅ Transcripción local terminada.")
+        
 
         # 3. Análisis con Gemini
         print("--- 🧠 Analizando con Gemini Flash ---")
@@ -55,21 +56,32 @@ def transcribe_audio(audio_path: str, output_basename: str):
         )
         
         prompt = f"""
-        Actúa como un psicólogo experto. Analiza esta transcripción.
+        Actúa como un psicólogo experto y traductor. Analiza la siguiente transcripción.
         
         TAREA:
-        1. Para cada una de las {len(segments_frontend)} frases, identifica si el hablante es 'Terapeuta' o 'Paciente'.
-        2. Genera un resumen clínico.
-        3. Evalúa el riesgo.
+        1. Para cada frase, identifica: Rol (Paciente/Terapeuta), Emoción predominante, Fluidez (Normal/Entrecortada/Lenta).
+        2. Traduce cada frase al inglés.
+        3. Genera un resumen clínico y evaluación de riesgo.
         
         TRANSCRIPCIÓN:
         {full_text_clean}
         
-        Responde estrictamente en JSON:
+        Responde estrictamente en JSON con esta estructura exacta para 'dialogo':
         {{
             "resumen_clinico": "...",
             "riesgo": "...",
-            "roles_detectados": ["Terapeuta", "Paciente", ...]
+            "dialogo": [
+                {{
+                    "inicio": "min:seg",
+                    "fin": "min:seg",
+                    "hablante": "Hablante X",
+                    "rol": "Paciente/Terapeuta",
+                    "emocion": "...",
+                    "fluidez": "...",
+                    "texto_es": "frase original",
+                    "texto_en": "translated phrase"
+                }}
+            ]
         }}
         """
 
@@ -99,10 +111,10 @@ def transcribe_audio(audio_path: str, output_basename: str):
         # 4. Fusión de datos (Whisper + Gemini)
         for i, segment in enumerate(segments_frontend):
             if i < len(roles):
-                segment["hablante"] = roles[i]
+                segment["rol"] = roles[i]
             else:
                 # Si Gemini mandó menos, intentamos deducir o ponemos el último conocido
-                segment["hablante"] = roles[-1] if roles else "Desconocido"
+                segment["rol"] = roles[-1] if roles else "Desconocido"
 
         final_output = {
             "resumen": analysis_data.get("resumen_clinico", "No disponible"),

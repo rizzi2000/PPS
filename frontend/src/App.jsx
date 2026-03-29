@@ -137,7 +137,7 @@ function App() {
             <div className="stats">
               <h4>Participantes Detectados</h4>
               <div className="roles-list">
-                {aiData.roles_identificados.map((r, i) => (
+                {aiData.roles_detectados.map((r, i) => (
                   <span key={i} className={`role-badge ${r.rol}`}>
                     {r.hablante}: {r.rol}
                   </span>
@@ -177,7 +177,7 @@ function App() {
           </div>
           
           <div className="transcript-list">
-            {aiData ? aiData.dialogo.map((seg, index) => {
+            {aiData ? aiData.transcripcion.map((seg, index) => {
               // Lógica de Sincronización: ¿Está sonando este segmento ahora?
               const start = timeToSeconds(seg.inicio)
               const end = timeToSeconds(seg.fin)
@@ -187,7 +187,7 @@ function App() {
                 <div key={index} className={clsx("message-row", seg.rol, { active: isActive })}>
                   <div className="meta">
                     <span className="timestamp">{seg.inicio}</span>
-                    <span className="speaker">{seg.hablante}</span>
+                    <span className="speaker">{seg.rol}</span>
                     {seg.emocion && <span className="emotion">({seg.emocion})</span>}
                   </div>
                   <div className="content">
