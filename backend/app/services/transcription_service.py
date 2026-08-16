@@ -89,8 +89,10 @@ def transcribe_audio(audio_path: str, output_basename: str):
         1. Para cada bloque de tiempo:
         - Identifica el Rol ('Paciente' o 'Terapeuta').
         - Determina el nombre o etiqueta del 'hablante' (ej: 'Psicólogo Marco', 'Entrevistador', 'Paciente').
-        - Analiza la emoción predominante (ej: Ansiedad, Neutro, Alegría, Reflexión).
-        - Evalúa la fluidez física: 'Normal', 'Lenta' (pausas largas) o 'Bloqueo' (tartamudeo o interrupciones).
+        - Analiza la emoción predominante las cual tienen que ser identificada entre estas posibilidades: Ansiedad, Neutral, Alegria, Reflexion, Tristeza, Enojo,Confusion, Certeza.
+        - Evalúa la fluidez física proporcionando dos datos:
+          1. 'fluidez': Etiqueta cualitativa ('Normal', 'Lenta', 'Bloqueo' o 'Rápida').
+          2. 'nivel_fluidez': Valor numérico continuo. [-1.0 a 0.0] para Baja fluidez/Bloqueo, [0.1 a 1.0] para Normal, y [1.1 a 2.0] para Rápida/Acelerada.
         2. Traduce el contenido íntegramente al inglés (texto_en).
         3. Redacta un resumen_clinico profundo basado en la narrativa y evalúa el riesgo.
 
@@ -106,7 +108,8 @@ def transcribe_audio(audio_path: str, output_basename: str):
                     "hablante": "...",
                     "rol": "Paciente/Terapeuta",
                     "emocion": "...",
-                    "fluidez": "Normal/Lenta/Bloqueo",
+                    "fluidez": "Normal/Lenta/Bloqueo/Rapida",
+                    "nivel_fluidez": 0.5,
                     "texto_en": "..."
                 }}
             ]
@@ -143,6 +146,7 @@ def transcribe_audio(audio_path: str, output_basename: str):
                 grouped_segments[i]["rol"]      = info_ia.get("rol", "Desconocido")
                 grouped_segments[i]["emocion"]  = info_ia.get("emocion", "Neutral")
                 grouped_segments[i]["fluidez"]  = info_ia.get("fluidez", "Normal")
+                grouped_segments[i]["nivel_fluidez"] = float(info_ia.get("nivel_fluidez", 0.5))
                 grouped_segments[i]["texto_en"] = info_ia.get("texto_en", "")
             else:
                 # Fallback para segmentos finales

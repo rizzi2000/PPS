@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import axios from 'axios'
 import WaveSurfer from 'wavesurfer.js'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js'
-import { Play, Pause, Upload, Activity, Brain, FileAudio } from 'lucide-react'
+import { Play, Pause, Upload, Activity, Brain, FileAudio, LineChart as ChartIcon } from 'lucide-react'
 import { clsx } from 'clsx'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, ReferenceLine } from 'recharts'
 import './App.css'
 
 const API_URL = 'http://127.0.0.1:8000/api/audio'
@@ -15,6 +16,27 @@ const timeToSeconds = (timeStr) => {
   return parseInt(parts[0]) * 60 + parseInt(parts[1])
 }
 
+const formatTime = (secs) => {
+  const m = Math.floor(secs / 60)
+  const s = Math.floor(secs % 60)
+  return `${m}:${s < 10 ? '0' : ''}${s}`
+}
+
+// SOLUCIÓN: El Tooltip se define AFUERA del componente App
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="chart-tooltip" style={{ background: '#fff', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        <p style={{ margin: 0, fontWeight: 'bold', color: '#334155' }}>{formatTime(data.time)}</p>
+        <p style={{ margin: '4px 0 0 0', color: '#4f46e5' }}>Fluidez: {data.etiqueta} ({data.fluidez})</p>
+        <p style={{ margin: '4px 0 0 0', color: '#0ea5e9' }}>Emoción: {data.emocion}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
 function App() {
   const [file, setFile] = useState(null)
   const [status, setStatus] = useState("idle") 
@@ -22,12 +44,13 @@ function App() {
   const [rhythmData, setRhythmData] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
+  // SOLUCIÓN: Estado para guardar la duración y no leer la referencia en el render
+  const [audioDuration, setAudioDuration] = useState(0) 
 
   const waveformRef = useRef(null)
   const wavesurfer = useRef(null)
-  const activeMessageRef = useRef(null) // Para auto-scroll
+  const activeMessageRef = useRef(null)
 
-  // Efecto para auto-scroll de la transcripción
   useEffect(() => {
     if (activeMessageRef.current) {
       activeMessageRef.current.scrollIntoView({
@@ -72,7 +95,7 @@ function App() {
       waveColor: '#cbd5e1',
       progressColor: '#6366f1',
       cursorColor: '#4338ca',
-      height: 120,
+      height: 100, 
       barWidth: 2,
       barGap: 1,
       normalize: true,
@@ -82,16 +105,18 @@ function App() {
     const regions = ws.registerPlugin(RegionsPlugin.create())
 
     ws.on('ready', () => {
-      // PINTAR REGIONES SEGÚN EL RITMO FÍSICO
+      // Guardamos la duración aquí
+      setAudioDuration(ws.getDuration())
+
       rhythmJson.forEach((point, index) => {
         const duration = ws.getDuration()
         const end = rhythmJson[index + 1] ? rhythmJson[index + 1].timestamp : duration
         
-        let color = 'rgba(148, 163, 184, 0.1)'; // Normal (Gris)
-        if (point.tipo === 'pausa') color = 'rgba(239, 68, 68, 0.25)'; // Rojo
-        if (point.tipo === 'acelerado') color = 'rgba(34, 197, 94, 0.25)'; // Verde
-        if (point.tipo === 'fluidez_alterada') color = 'rgba(245, 158, 11, 0.25)'; // Naranja
-        if (point.tipo === 'ajeno') color = 'rgba(0, 0, 0, 0.05)'; // Parte del terapeuta o ruido
+        let color = 'rgba(148, 163, 184, 0.1)'
+        if (point.tipo === 'pausa') color = 'rgba(239, 68, 68, 0.25)'
+        if (point.tipo === 'acelerado') color = 'rgba(34, 197, 94, 0.25)'
+        if (point.tipo === 'fluidez_alterada') color = 'rgba(245, 158, 11, 0.25)'
+        if (point.tipo === 'ajeno') color = 'rgba(0, 0, 0, 0.05)'
 
         regions.addRegion({
           start: point.timestamp,
@@ -117,6 +142,22 @@ function App() {
       setIsPlaying(!isPlaying)
     }
   }
+
+  const chartData = useMemo(() => {
+    if (!aiData || !aiData.dialogo) return [];
+    
+    return aiData.dialogo
+      .filter(seg => seg.rol === 'Paciente')
+      .reduce((acc, seg) => {
+        const start = timeToSeconds(seg.inicio);
+        const end = timeToSeconds(seg.fin);
+        const val = isNaN(Number(seg.nivel_fluidez)) ? 0.5 : Number(seg.nivel_fluidez);
+        
+        acc.push({ time: start, fluidez: val, etiqueta: seg.fluidez, emocion: seg.emocion });
+        acc.push({ time: end,   fluidez: val, etiqueta: seg.fluidez, emocion: seg.emocion });
+        return acc;
+      }, []);
+  }, [aiData]);
 
   return (
     <div className="layout">
@@ -160,7 +201,7 @@ function App() {
         <div className="card waveform-card">
           <div className="card-header">
             <Activity size={20} />
-            <h2>Análisis de Fluidez (Paciente)</h2>
+            <h2>Señal Acústica (Micropauses)</h2>
           </div>
           <div ref={waveformRef} className="waveform-container"></div>
           
@@ -173,15 +214,66 @@ function App() {
             </span>
             {rhythmData && (
               <div className="legend">
-              <span className="dot pausa"></span> Pausa 
-              <span className="dot alterada"></span> Bloqueo 
-              <span className="dot normal"></span> Normal
-            </div>
+                <span className="dot pausa"></span> Pausa 
+                <span className="dot alterada"></span> Bloqueo 
+                <span className="dot normal"></span> Normal
+              </div>
             )}
           </div>
         </div>
 
-        <div className="card transcript-card">
+        {aiData && chartData.length > 0 && (
+          <div className="card chart-card" style={{ marginTop: '20px' }}>
+            <div className="card-header" style={{ marginBottom: '15px' }}>
+              <ChartIcon size={20} />
+              <h2>Flujo de Fluidez (Paciente)</h2>
+            </div>
+            
+            <div style={{ width: '100%', height: 220 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  
+                  {/* Se utiliza audioDuration en lugar de wavesurfer.current */}
+                  <XAxis 
+                    dataKey="time" 
+                    type="number" 
+                    domain={[0, audioDuration || 'dataMax']} 
+                    tickFormatter={formatTime} 
+                    stroke="#94a3b8" 
+                    minTickGap={30}
+                  />
+                  <YAxis domain={[-1.5, 2]} hide={true} />
+                  
+                  <Tooltip content={<CustomTooltip />} />
+
+                  <ReferenceArea y1={-1.5} y2={0.0} fill="#fee2e2" fillOpacity={0.6} /> 
+                  <ReferenceArea y1={0.0}  y2={1.0} fill="#f1f5f9" fillOpacity={0.6} /> 
+                  <ReferenceArea y1={1.0}  y2={2.0} fill="#fef3c7" fillOpacity={0.6} /> 
+
+                  <ReferenceLine x={currentTime} stroke="#ef4444" strokeWidth={2} />
+
+                  <Area 
+                    type="monotone" 
+                    dataKey="fluidez" 
+                    stroke="#4f46e5" 
+                    strokeWidth={3}
+                    fill="#818cf8" 
+                    fillOpacity={0.4} 
+                    isAnimationActive={false} 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="legend" style={{ justifyContent: 'center', marginTop: '10px' }}>
+                <span className="dot" style={{ background: '#fee2e2' }}></span> Zona Baja (Bloqueo)
+                <span className="dot" style={{ background: '#f1f5f9' }}></span> Zona Normal
+                <span className="dot" style={{ background: '#fef3c7' }}></span> Zona Alta (Acelerado)
+            </div>
+          </div>
+        )}
+
+        <div className="card transcript-card" style={{ marginTop: '20px' }}>
           <div className="card-header">
             <FileAudio size={20} />
             <h2>Transcripción por Hablante</h2>
@@ -209,9 +301,9 @@ function App() {
                     <p className="text-en">{seg.texto_en}</p>
                   </div>
                   <div className="metrics">
-                     {seg.fluidez !== 'Normal' && (
-                        <span className={clsx("fluidez-badge", seg.fluidez?.toLowerCase())}>
-                            {seg.fluidez}
+                     {seg.fluidez && seg.fluidez !== 'Normal' && (
+                        <span className={clsx("fluidez-badge", seg.fluidez.toLowerCase())}>
+                            {seg.fluidez} ({seg.nivel_fluidez})
                         </span>
                      )}
                   </div>

@@ -29,13 +29,13 @@ def analyze_rhythm(audio_path: str, output_basename: str):
                 s = time_str_to_seconds(seg.get("inicio", "00:00"))
                 e = time_str_to_seconds(seg.get("fin", "00:00"))
                 
-                # Guardamos info de CUALQUIER hablante para el gráfico, 
-                # pero identificamos si es paciente o no
+                # Guardamos info de CUALQUIER hablante para el gráfico
                 rol = str(seg.get("rol", "")).lower()
                 segmentos_interes.append({
                     "rango": (s, e),
                     "es_paciente": "paciente" in rol,
-                    "fluidez_ia": seg.get("fluidez", "Normal")
+                    # AQUI LEEMOS EL VALOR NUMÉRICO CONTINUO PARA EL GRÁFICO
+                    "fluidez_ia": seg.get("nivel_fluidez", 0.5) 
                 })
 
     rhythm_data = []
@@ -50,17 +50,31 @@ def analyze_rhythm(audio_path: str, output_basename: str):
             start, end = interv["rango"]
             if (start - 0.1) <= t <= (end + 0.1):
                 en_segmento = True
-                # Lógica de colores/tipos
+                
+                # Aseguramos que la fluidez sea un número flotante
+                try:
+                    fluidez_val = float(interv.get("fluidez_ia", 0.5))
+                except (ValueError, TypeError):
+                    fluidez_val = 0.5
+
+                # Lógica de colores/tipos actualizada a números
                 if val < 0.005: 
                     tipo = "pausa"
                 elif not interv["es_paciente"]:
                     tipo = "terapeuta" # Color distinto para el terapeuta
-                elif "lenta" in interv["fluidez_ia"].lower() or "bloqueo" in interv["fluidez_ia"].lower():
+                
+                # Rango de Baja Fluidez (Lenta o Bloqueo: <= 0.0)
+                elif fluidez_val <= 0.0:
                     tipo = "fluidez_alterada"
-                elif val > (rms_mean * 2):
+                
+                # Rango de Alta Fluidez (> 1.0) o Pico físico de energía
+                elif fluidez_val > 1.0 or val > (rms_mean * 2):
                     tipo = "acelerado"
+                
+                # Rango Normal (0.1 a 1.0)
                 else:
                     tipo = "normal_paciente"
+                
                 break
         
         # Guardar solo cambios de estado (compresión de datos)
