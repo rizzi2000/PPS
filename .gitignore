@@ -1,18 +1,22 @@
-# Archivos de sistema y entorno
+# Entorno y secretos
 .env
+.env.local
 .DS_Store
 
 # Backend - Python
 backend/venv/
 backend/__pycache__/
-backend/*.pyc
+**/__pycache__/
+*.pyc
 
-# Carpetas de datos generados (No subir audios ni jsons privados)
+# Datos generados (audios y análisis: información clínica sensible)
 backend/uploads/
 backend/transcriptions/
 backend/visualizations/
+backend/results/
+backend/cache/
 
 # Frontend - Node
 frontend/node_modules/
 frontend/dist/
-frontend/.env.localgit
+frontend/.env.local

@@ -1,0 +1,875 @@
+<title>NeuroVoice por dentro</title>
+
+<style>
+  /* ---------- Tokens: paleta clara completa en :root ---------- */
+  :root {
+    color-scheme: light;
+
+    --ground:    #f3f4f2;
+    --surface:   #fbfbfa;
+    --surface-2: #ecedea;
+    --hairline:  #d9dbd6;
+    --rule:      #c3c6c0;
+
+    --ink:    #15181c;
+    --ink-2:  #565c64;
+    --ink-3:  #7d838b;
+
+    /* Los mismos colores de hablante que usa la app, validados para daltonismo */
+    --signal:  #2a78d6;   /* terapeuta / flujo de control */
+    --measure: #c94e24;   /* paciente / lo que se mide */
+    --dsp:     #10775a;   /* etapas de señal (DSP) */
+    --llm:     #6c4bb8;   /* etapas de lenguaje */
+
+    --signal-wash:  rgba(42, 120, 214, 0.10);
+    --measure-wash: rgba(201, 78, 36, 0.10);
+    --dsp-wash:     rgba(16, 119, 90, 0.10);
+    --llm-wash:     rgba(108, 75, 184, 0.10);
+
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --mono: ui-monospace, "Cascadia Mono", "SF Mono", "Segoe UI Mono", Menlo, monospace;
+
+    --maxw: 940px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground:    #0d0f11;
+      --surface:   #16191c;
+      --surface-2: #1f2327;
+      --hairline:  #2a2f34;
+      --rule:      #3a4046;
+
+      --ink:    #e9ecef;
+      --ink-2:  #a4abb3;
+      --ink-3:  #7b838c;
+
+      --signal:  #4d95e8;
+      --measure: #e0703f;
+      --dsp:     #2ba983;
+      --llm:     #9b81e0;
+
+      --signal-wash:  rgba(77, 149, 232, 0.14);
+      --measure-wash: rgba(224, 112, 63, 0.14);
+      --dsp-wash:     rgba(43, 169, 131, 0.14);
+      --llm-wash:     rgba(155, 129, 224, 0.14);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground:    #0d0f11;
+    --surface:   #16191c;
+    --surface-2: #1f2327;
+    --hairline:  #2a2f34;
+    --rule:      #3a4046;
+
+    --ink:    #e9ecef;
+    --ink-2:  #a4abb3;
+    --ink-3:  #7b838c;
+
+    --signal:  #4d95e8;
+    --measure: #e0703f;
+    --dsp:     #2ba983;
+    --llm:     #9b81e0;
+
+    --signal-wash:  rgba(77, 149, 232, 0.14);
+    --measure-wash: rgba(224, 112, 63, 0.14);
+    --dsp-wash:     rgba(43, 169, 131, 0.14);
+    --llm-wash:     rgba(155, 129, 224, 0.14);
+  }
+
+  /* ---------- Base ---------- */
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  h1, h2, h3 {
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 { font-size: clamp(31px, 5vw, 45px); font-weight: 660; line-height: 1.08; }
+  h2 { font-size: clamp(21px, 3vw, 26px); font-weight: 640; }
+  h3 { font-size: 16.5px; font-weight: 640; }
+
+  p { margin: 0; }
+  a { color: var(--signal); }
+
+  .lede {
+    font-family: var(--serif);
+    font-size: 18.5px;
+    line-height: 1.58;
+    color: var(--ink-2);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  code, .mono { font-family: var(--mono); font-size: 0.9em; }
+  code {
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 0.1em 0.34em;
+  }
+
+  /* ---------- Encabezado ---------- */
+  header.hero {
+    border-bottom: 1px solid var(--rule);
+    padding: 64px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .hero .lede { max-width: 62ch; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .stat { background: var(--surface); padding: 15px 17px; display: flex; flex-direction: column; gap: 3px; }
+  .stat .n {
+    font-family: var(--mono);
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--signal);
+  }
+  .stat .l { font-size: 12.5px; color: var(--ink-2); line-height: 1.35; }
+
+  /* ---------- Secciones ---------- */
+  section { padding-top: 60px; display: flex; flex-direction: column; gap: 20px; }
+  section > p, section > .lede { max-width: 68ch; }
+
+  .sec-head { display: flex; flex-direction: column; gap: 8px; }
+
+  /* ---------- Figuras ---------- */
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 22px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: auto;
+  }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 620px; }
+  figcaption { font-size: 13px; color: var(--ink-2); line-height: 1.5; max-width: 74ch; }
+
+  /* ---------- Línea de tiempo del pipeline ---------- */
+  .timeline { display: flex; flex-direction: column; gap: 1px; background: var(--hairline);
+              border: 1px solid var(--hairline); border-radius: 12px; overflow: hidden; }
+
+  .stage { background: var(--surface); display: grid; grid-template-columns: 96px 1fr;
+           gap: 20px; padding: 20px 22px; }
+  @media (max-width: 640px) { .stage { grid-template-columns: 1fr; gap: 10px; } }
+
+  .stage .rail { display: flex; flex-direction: column; gap: 5px; }
+  .stage .tc {
+    font-family: var(--mono); font-variant-numeric: tabular-nums;
+    font-size: 15px; font-weight: 600; letter-spacing: -0.02em;
+  }
+  .stage .dur { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+
+  .stage .body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .stage .body p { color: var(--ink-2); font-size: 14.5px; }
+  .stage .body p strong { color: var(--ink); font-weight: 600; }
+
+  .stage-title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+
+  .tag {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em;
+    text-transform: uppercase; padding: 2.5px 8px; border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+  .tag.dsp    { color: var(--dsp);    background: var(--dsp-wash); }
+  .tag.llm    { color: var(--llm);    background: var(--llm-wash); }
+  .tag.signal { color: var(--signal); background: var(--signal-wash); }
+
+  .stage.is-dsp    .tc { color: var(--dsp); }
+  .stage.is-llm    .tc { color: var(--llm); }
+  .stage.is-signal .tc { color: var(--signal); }
+
+  .emit {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-2);
+    background: var(--surface-2); border-left: 2px solid var(--rule);
+    padding: 7px 11px; border-radius: 0 5px 5px 0;
+  }
+  .emit b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Tablas ---------- */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--hairline); border-radius: 12px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 560px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  thead th {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 500;
+    background: var(--surface-2);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 580; white-space: nowrap; }
+  td.mono, th.mono { font-family: var(--mono); font-size: 12.8px; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+  /* ---------- Bloques de código / árbol ---------- */
+  pre {
+    margin: 0; overflow-x: auto; background: var(--surface);
+    border: 1px solid var(--hairline); border-radius: 12px;
+    padding: 18px 20px; font-family: var(--mono); font-size: 12.8px;
+    line-height: 1.68; color: var(--ink-2);
+  }
+  pre b { color: var(--ink); font-weight: 600; }
+  pre .c { color: var(--ink-3); }
+  pre .s { color: var(--signal); }
+  pre .m { color: var(--measure); }
+
+  /* ---------- Tarjetas de decisión ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 18px 19px;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .card h3 { font-size: 15.5px; }
+  .card p { font-size: 14px; color: var(--ink-2); }
+  .card .before {
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
+    padding-top: 8px; border-top: 1px solid var(--hairline);
+  }
+
+  .note {
+    border-left: 3px solid var(--measure);
+    background: var(--measure-wash);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    font-size: 14.5px; color: var(--ink-2);
+  }
+  .note b { color: var(--ink); }
+
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">Arquitectura · PPS</span>
+    <h1>NeuroVoice por dentro</h1>
+    <p class="lede">
+      Qué le pasa a un audio de sesión terapéutica desde que se suelta en el navegador
+      hasta que aparecen la transcripción, los hablantes separados y las métricas del
+      paciente. Cada tecnología, qué hace, y por qué está ahí.
+    </p>
+
+    <div class="stats">
+      <div class="stat"><span class="n">0.7 s</span><span class="l">Hasta ver el waveform</span></div>
+      <div class="stat"><span class="n">~2:50</span><span class="l">Análisis completo de 5 min</span></div>
+      <div class="stat"><span class="n">6</span><span class="l">Etapas, cada una emite al terminar</span></div>
+      <div class="stat"><span class="n">1</span><span class="l">Decodificación para todo el pipeline</span></div>
+    </div>
+  </header>
+
+  <!-- ============================ MECANISMO ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">El mecanismo</span>
+      <h2>Una decodificación, cuatro consumidores</h2>
+    </div>
+
+    <p class="lede">
+      Todo el diseño gira alrededor de una idea: el audio se convierte a PCM una sola vez,
+      y ese mismo array en memoria lo usan las cuatro etapas de análisis. Nada vuelve a
+      tocar el archivo original.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 880 400" role="img"
+           aria-label="Diagrama: el archivo de audio se decodifica una vez a PCM de 16 kHz, y ese array alimenta en paralelo el cálculo de picos, la transcripción, la diarización y la prosodia; cada etapa emite su resultado por SSE a la interfaz en un momento distinto.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="currentColor"/>
+          </marker>
+          <marker id="ar-s" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <polygon points="0,1 10,5 0,9" fill="var(--signal)"/>
+          </marker>
+        </defs>
+
+        <!-- archivo -->
+        <rect x="14" y="172" width="104" height="56" rx="7"
+              fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.75"/>
+        <text x="66" y="196" text-anchor="middle" font-size="12.5" fill="currentColor">sesion.mp3</text>
+        <text x="66" y="213" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.6">44 kHz estéreo</text>
+
+        <!-- ffmpeg -->
+        <line x1="120" y1="200" x2="180" y2="200" stroke="currentColor" stroke-width="1.5"
+              marker-end="url(#ar)"/>
+        <text x="150" y="192" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.75">ffmpeg</text>
+
+        <!-- PCM: el artefacto central -->
+        <rect x="182" y="158" width="150" height="84" rx="8"
+              fill="var(--signal-wash)" stroke="var(--signal)" stroke-width="2"/>
+        <text x="257" y="186" text-anchor="middle" font-size="13" font-weight="600" fill="var(--signal)">PCM 16 kHz</text>
+        <text x="257" y="204" text-anchor="middle" font-size="11.5" fill="var(--signal)">mono · float32</text>
+        <text x="257" y="223" text-anchor="middle" font-size="11" fill="var(--signal)" opacity="0.8">en memoria, 1 vez</text>
+
+        <!-- fan-out -->
+        <path d="M336 200 C 380 200, 390 62, 430 62" fill="none" stroke="var(--signal)"
+              stroke-width="1.5" marker-end="url(#ar-s)"/>
+        <path d="M336 200 C 380 200, 390 154, 430 154" fill="none" stroke="var(--signal)"
+              stroke-width="1.5" marker-end="url(#ar-s)"/>
+        <path d="M336 200 C 380 200, 390 246, 430 246" fill="none" stroke="var(--signal)"
+              stroke-width="1.5" marker-end="url(#ar-s)"/>
+        <path d="M336 200 C 380 200, 390 338, 430 338" fill="none" stroke="var(--signal)"
+              stroke-width="1.5" marker-end="url(#ar-s)"/>
+
+        <!-- etapas -->
+        <g font-size="12.5" fill="currentColor">
+          <rect x="432" y="38" width="196" height="48" rx="7" fill="none" stroke="var(--dsp)" stroke-width="1.5"/>
+          <text x="446" y="58" font-weight="600" fill="var(--dsp)">picos (numpy)</text>
+          <text x="446" y="75" font-size="11" fill="var(--dsp)" opacity="0.85">envolvente, 2000 puntos</text>
+
+          <rect x="432" y="130" width="196" height="48" rx="7" fill="none" stroke="var(--dsp)" stroke-width="1.5"/>
+          <text x="446" y="150" font-weight="600" fill="var(--dsp)">faster-whisper</text>
+          <text x="446" y="167" font-size="11" fill="var(--dsp)" opacity="0.85">texto + tiempo por palabra</text>
+
+          <rect x="432" y="222" width="196" height="48" rx="7" fill="none" stroke="var(--dsp)" stroke-width="1.5"/>
+          <text x="446" y="242" font-weight="600" fill="var(--dsp)">ECAPA + clustering</text>
+          <text x="446" y="259" font-size="11" fill="var(--dsp)" opacity="0.85">turnos de hablante</text>
+
+          <rect x="432" y="314" width="196" height="48" rx="7" fill="none" stroke="var(--dsp)" stroke-width="1.5"/>
+          <text x="446" y="334" font-weight="600" fill="var(--dsp)">prosodia (FFT)</text>
+          <text x="446" y="351" font-size="11" fill="var(--dsp)" opacity="0.85">ritmo, pausas, tono</text>
+        </g>
+
+        <!-- arrows to SSE with timecodes -->
+        <g stroke="currentColor" stroke-width="1.3" opacity="0.8">
+          <line x1="630" y1="62"  x2="700" y2="62"  marker-end="url(#ar)"/>
+          <line x1="630" y1="154" x2="700" y2="154" marker-end="url(#ar)"/>
+          <line x1="630" y1="246" x2="700" y2="246" marker-end="url(#ar)"/>
+          <line x1="630" y1="338" x2="700" y2="338" marker-end="url(#ar)"/>
+        </g>
+        <g font-size="10.5" fill="currentColor" opacity="0.7" text-anchor="middle">
+          <text x="665" y="55">0.7 s</text>
+          <text x="665" y="147">en vivo</text>
+          <text x="665" y="239">2:05</text>
+          <text x="665" y="331">2:06</text>
+        </g>
+
+        <!-- SSE bus -->
+        <rect x="702" y="26" width="160" height="348" rx="8"
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"/>
+        <text x="782" y="52" text-anchor="middle" font-size="12.5" font-weight="600" fill="currentColor">bus SSE</text>
+        <text x="782" y="70" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">un evento</text>
+        <text x="782" y="85" text-anchor="middle" font-size="11" fill="currentColor" opacity="0.7">por etapa</text>
+
+        <line x1="782" y1="104" x2="782" y2="300" stroke="currentColor" stroke-width="1.3"
+              opacity="0.55" marker-end="url(#ar)"/>
+
+        <rect x="716" y="308" width="132" height="52" rx="7"
+              fill="var(--measure-wash)" stroke="var(--measure)" stroke-width="1.8"/>
+        <text x="782" y="330" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--measure)">React</text>
+        <text x="782" y="348" text-anchor="middle" font-size="11" fill="var(--measure)">dibuja al llegar</text>
+      </svg>
+
+      <figcaption>
+        El array PCM es el único punto de decodificación. Antes, cada análisis volvía a
+        abrir el archivo con <code>librosa.load(sr=None)</code> a 44 kHz en float64 — cinco
+        a ocho veces más RAM y CPU, algo que en 8 GB se nota. Las flechas hacia el bus SSE
+        llevan el momento real en que cada etapa emite, medido sobre una sesión de 5:37.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ RECORRIDO ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">El recorrido</span>
+      <h2>Un audio, etapa por etapa</h2>
+    </div>
+
+    <p>
+      Los tiempos de la columna izquierda son medidos, no estimados: corresponden a
+      <span class="mono">Entrevista a Psicólogo Educativo.mp3</span> (5 min 37 s) en un
+      Intel i3-10110U de 2 núcleos, sin GPU. El orden de las etapas no es arbitrario —
+      está puesto por <em>valor percibido dividido tiempo de cómputo</em>.
+    </p>
+
+    <div class="timeline">
+
+      <div class="stage is-signal">
+        <div class="rail">
+          <span class="tc">00.0 s</span>
+          <span class="dur">instantáneo</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Llega el archivo</h3><span class="tag signal">FastAPI</span></div>
+          <p>
+            El navegador manda el audio por <code>POST /api/sessions</code>. El servidor lo
+            escribe en disco en trozos de 1 MB (nunca carga el archivo entero en RAM),
+            <strong>sanitiza el nombre</strong> para evitar rutas tipo <code>../../</code>,
+            corta si supera 300 MB, y responde de inmediato con un <code>job_id</code>.
+          </p>
+          <p>
+            El análisis arranca en un <strong>hilo aparte</strong>. Esto es importante: el
+            pipeline es CPU-bound y si corriera en el event loop de asyncio congelaría el
+            servidor entero para todos los demás pedidos.
+          </p>
+          <div class="emit">respuesta &rarr; <b>{ job_id }</b> · el front se suscribe al stream</div>
+        </div>
+      </div>
+
+      <div class="stage is-dsp">
+        <div class="rail">
+          <span class="tc">00.7 s</span>
+          <span class="dur">+0.7 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Decodificación y picos</h3><span class="tag dsp">ffmpeg · numpy</span></div>
+          <p>
+            ffmpeg decodifica a PCM de 16 kHz mono directamente por <em>stdout</em>, sin
+            archivo intermedio. Sobre ese array, numpy calcula la envolvente: se parte en
+            2000 baldes y de cada uno se toma el valor de mayor magnitud, conservando el
+            signo. Eso son <strong>4 milisegundos</strong>.
+          </p>
+          <p>
+            Es el mismo formato que devuelve <code>wavesurfer.exportPeaks()</code>. Al
+            mandárselos precalculados junto con la duración, WaveSurfer
+            <strong>dibuja sin descargar ni decodificar</strong> el archivo en el navegador.
+          </p>
+          <div class="emit">SSE <b>peaks</b> &rarr; el waveform ya está en pantalla y es navegable</div>
+        </div>
+      </div>
+
+      <div class="stage is-dsp">
+        <div class="rail">
+          <span class="tc">1:51</span>
+          <span class="dur">+110 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Transcripción</h3><span class="tag dsp">faster-whisper + VAD Silero</span></div>
+          <p>
+            El modelo <code>small</code> cuantizado a <code>int8</code> transcribe con
+            <strong>timestamps por palabra</strong>. Un VAD saltea los silencios, lo que en
+            sesiones con pausas largas recorta entre 20 % y 40 % del cómputo.
+          </p>
+          <p>
+            La función es un <em>generador</em>: emite cada enunciado apenas lo termina, no
+            al final. Por eso el texto va apareciendo en pantalla desde el segundo ~10 en
+            vez de todo junto al final.
+          </p>
+          <div class="emit">SSE <b>segment</b> &times; N &rarr; la transcripción se llena en vivo</div>
+        </div>
+      </div>
+
+      <div class="stage is-dsp">
+        <div class="rail">
+          <span class="tc">2:19</span>
+          <span class="dur">+28 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Quién habla</h3><span class="tag dsp">ECAPA-TDNN · scikit-learn</span></div>
+          <p>
+            Se cortan ventanas de 1.5 s dentro de las zonas con voz, se saca un
+            <em>embedding</em> de locutor de cada una con ECAPA-TDNN, y se agrupan por
+            clustering aglomerativo con distancia coseno. El número de hablantes lo decide
+            el <em>silhouette score</em>, no un parámetro fijo.
+          </p>
+          <p>
+            Después un filtro de mediana borra los cambios de una sola ventana, que casi
+            siempre son ruido del clustering y no turnos reales. Los roles se asignan por
+            <strong>asimetría conversacional</strong>: el terapeuta hace turnos cortos y
+            muchas preguntas; el paciente habla más tiempo seguido.
+          </p>
+          <div class="emit">SSE <b>speakers</b> &rarr; franja de turnos + etiquetas en la transcripción</div>
+        </div>
+      </div>
+
+      <div class="stage is-dsp">
+        <div class="rail">
+          <span class="tc">2:20</span>
+          <span class="dur">+0.8 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Prosodia</h3><span class="tag dsp">numpy · FFT</span></div>
+          <p>
+            Por cada enunciado se mide: <strong>sílabas por segundo</strong> (núcleos
+            vocálicos ÷ tiempo), <strong>tasa de articulación</strong> descontando pausas,
+            <strong>ratio de pausa</strong>, <strong>F0</strong> por autocorrelación
+            vectorizada con FFT, y energía RMS.
+          </p>
+          <p>
+            Todo se normaliza en z-score <strong>dentro de cada hablante</strong>. El 0 es
+            la línea de base de esa persona, no una escala absoluta: comparar el ritmo de
+            dos personas distintas en valores crudos no significa nada clínicamente.
+          </p>
+          <div class="emit">SSE <b>segments_final</b> &rarr; se dibujan los gráficos de fluidez y activación</div>
+        </div>
+      </div>
+
+      <div class="stage is-llm">
+        <div class="rail">
+          <span class="tc">2:47</span>
+          <span class="dur">+27 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Traducción y emoción</h3><span class="tag llm">Gemini Flash</span></div>
+          <p>
+            Recién acá entra el modelo de lenguaje, y sólo para lo que sabe hacer: traducir
+            al inglés, clasificar la emoción del texto y etiquetar el tema. Los enunciados
+            van en <strong>chunks de 25 que se procesan en paralelo</strong> — son llamadas
+            de red, así que los hilos escalan aunque la CPU tenga 2 núcleos.
+          </p>
+          <p>
+            Las emociones se validan contra un <strong>enum cerrado de 8 etiquetas</strong>.
+            Lo que no matchea cae a <code>Neutral</code> en vez de ensuciar el dataset con
+            categorías inventadas.
+          </p>
+          <div class="emit">SSE <b>translations</b> &rarr; aparece el texto en inglés y los chips de emoción</div>
+        </div>
+      </div>
+
+      <div class="stage is-llm">
+        <div class="rail">
+          <span class="tc">~3:07</span>
+          <span class="dur">+20 s</span>
+        </div>
+        <div class="body">
+          <div class="stage-title"><h3>Resumen clínico</h3><span class="tag llm">Gemini Flash</span></div>
+          <p>
+            La última llamada recibe la transcripción <em>y las métricas acústicas ya
+            calculadas</em>, para que el resumen se apoye en datos medidos y no sólo en el
+            texto. Devuelve narrativa, nivel de riesgo con su justificación, temas centrales,
+            indicadores observados y líneas de trabajo.
+          </p>
+          <p>
+            El resultado completo se guarda como JSON en <code>results/{job_id}.json</code>,
+            así la sesión se puede volver a abrir sin reprocesar nada.
+          </p>
+          <div class="emit">SSE <b>summary</b>, <b>done</b> &rarr; se cierra el stream</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ CORTE POR TURNOS ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">El detalle que lo cambia todo</span>
+      <h2>Cómo se desarma el audio</h2>
+    </div>
+
+    <p class="lede">
+      Whisper corta por pausas de respiración, no por cambios de persona. Un bloque suyo
+      puede contener la pregunta del terapeuta y la respuesta del paciente. Mientras eso
+      pase, el rol es literalmente inasignable.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 840 250" role="img"
+           aria-label="Comparación: antes, un solo bloque de 29 segundos abarcaba a los dos hablantes y no se le podía asignar rol. Ahora, los turnos detectados por diarización cortan ese bloque en cuatro enunciados, cada uno de un solo hablante.">
+        <defs>
+          <marker id="tick" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4">
+            <circle cx="5" cy="5" r="3" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- ANTES -->
+        <text x="88" y="46" text-anchor="end" font-size="12" font-weight="600" fill="currentColor">ANTES</text>
+        <text x="88" y="62" text-anchor="end" font-size="10.5" fill="currentColor" opacity="0.6">1 bloque</text>
+        <rect x="96" y="28" width="681" height="38" rx="5"
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+        <text x="436" y="52" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.85">
+          29 s · dos voces mezcladas · rol = ?
+        </text>
+
+        <!-- TURNOS -->
+        <text x="88" y="124" text-anchor="end" font-size="12" font-weight="600" fill="currentColor">TURNOS</text>
+        <text x="88" y="140" text-anchor="end" font-size="10.5" fill="currentColor" opacity="0.6">ECAPA</text>
+        <rect x="96"  y="110" width="139" height="26" rx="4" fill="var(--signal)"/>
+        <rect x="239" y="110" width="184" height="26" rx="4" fill="var(--measure)"/>
+        <rect x="427" y="110" width="66"  height="26" rx="4" fill="var(--signal)"/>
+        <rect x="497" y="110" width="280" height="26" rx="4" fill="var(--measure)"/>
+        <g font-size="10.5" fill="#ffffff" text-anchor="middle" font-weight="600">
+          <text x="165" y="128">Terapeuta</text>
+          <text x="331" y="128">Paciente</text>
+          <text x="460" y="128">Ter.</text>
+          <text x="637" y="128">Paciente</text>
+        </g>
+
+        <!-- líneas de corte -->
+        <g stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" opacity="0.45">
+          <line x1="237" y1="66" x2="237" y2="180"/>
+          <line x1="425" y1="66" x2="425" y2="180"/>
+          <line x1="495" y1="66" x2="495" y2="180"/>
+        </g>
+
+        <!-- AHORA -->
+        <text x="88" y="200" text-anchor="end" font-size="12" font-weight="600" fill="currentColor">AHORA</text>
+        <text x="88" y="216" text-anchor="end" font-size="10.5" fill="currentColor" opacity="0.6">4 enunciados</text>
+        <rect x="96"  y="182" width="139" height="34" rx="5" fill="var(--signal-wash)"  stroke="var(--signal)"  stroke-width="1.5"/>
+        <rect x="239" y="182" width="184" height="34" rx="5" fill="var(--measure-wash)" stroke="var(--measure)" stroke-width="1.5"/>
+        <rect x="427" y="182" width="66"  height="34" rx="5" fill="var(--signal-wash)"  stroke="var(--signal)"  stroke-width="1.5"/>
+        <rect x="497" y="182" width="280" height="34" rx="5" fill="var(--measure-wash)" stroke="var(--measure)" stroke-width="1.5"/>
+
+        <!-- eje -->
+        <line x1="96" y1="234" x2="777" y2="234" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+        <g font-size="10" fill="currentColor" opacity="0.6" text-anchor="middle">
+          <text x="96"  y="247">0 s</text>
+          <text x="237" y="247">6 s</text>
+          <text x="425" y="247">14 s</text>
+          <text x="495" y="247">17 s</text>
+          <text x="777" y="247">29 s</text>
+        </g>
+      </svg>
+
+      <figcaption>
+        Los cortes caen en los límites de turno detectados por diarización, y se aplican
+        <em>usando los timestamps de cada palabra</em> — por eso pueden partir un bloque por
+        el medio sin desalinear el texto. Es lo que hace
+        <code>split_segments_by_turns()</code> en <span class="mono">asr.py</span>. Después,
+        <code>_merge_tiny()</code> absorbe los fragmentos de una o dos palabras (los «sí»,
+        «ajá») en el turno vecino del mismo hablante, para que la lista no quede picada.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ TECNOLOGÍAS ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Las piezas</span>
+      <h2>Qué hace cada tecnología</h2>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Tecnología</th><th>Rol en el sistema</th><th>Por qué ésta</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ffmpeg</td>
+            <td>Decodifica cualquier formato a PCM 16 kHz mono</td>
+            <td>131× tiempo real. Es la única dependencia externa al entorno de Python</td>
+          </tr>
+          <tr>
+            <td>FastAPI</td>
+            <td>API, validación, streaming SSE, servido de audio con <code>Range</code></td>
+            <td>SSE nativo sin librerías extra; el <code>Range</code> permite hacer seek en sesiones de una hora</td>
+          </tr>
+          <tr>
+            <td>faster-whisper</td>
+            <td>Transcripción con tiempo por palabra</td>
+            <td>Reimplementación en CTranslate2: ~4× más rápido que <code>openai-whisper</code> en CPU con int8</td>
+          </tr>
+          <tr>
+            <td>Silero VAD</td>
+            <td>Detecta dónde hay voz</td>
+            <td>Viene integrado en faster-whisper; saltear silencios ahorra 20–40 % del cómputo</td>
+          </tr>
+          <tr>
+            <td>ECAPA-TDNN</td>
+            <td>Embedding de locutor por ventana</td>
+            <td>Es lo que distingue voces. El fallback por MFCC colapsaba las dos personas en una</td>
+          </tr>
+          <tr>
+            <td>scikit-learn</td>
+            <td>Clustering aglomerativo + silhouette</td>
+            <td>Agrupa los embeddings y decide cuántos hablantes hay sin fijarlo a mano</td>
+          </tr>
+          <tr>
+            <td>numpy / scipy</td>
+            <td>Picos, RMS, F0 por autocorrelación FFT</td>
+            <td>Vectorizado. Reemplaza a <code>librosa.yin</code>, que tardaba minutos en esta CPU</td>
+          </tr>
+          <tr>
+            <td>Gemini Flash</td>
+            <td>Traducción, emoción textual, resumen clínico</td>
+            <td>Barato y rápido. No mide nada: sólo interpreta contenido</td>
+          </tr>
+          <tr>
+            <td>React 19 + Vite</td>
+            <td>Interfaz y estado del análisis</td>
+            <td>El estado se maneja con una máquina alimentada por eventos SSE</td>
+          </tr>
+          <tr>
+            <td>wavesurfer.js 7</td>
+            <td>Waveform, cursor, seek</td>
+            <td>Acepta picos precalculados: dibuja sin decodificar nada en el navegador</td>
+          </tr>
+          <tr>
+            <td>Recharts</td>
+            <td>Gráficos de fluidez y activación</td>
+            <td>SVG declarativo, se integra con los tokens de tema de la app</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ ARCHIVOS ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">El mapa</span>
+      <h2>Dónde vive cada cosa</h2>
+    </div>
+
+<pre><span class="c">backend/</span>
+  <b>main.py</b>                  <span class="c">API, CORS, precarga de modelos al arrancar</span>
+  app/core/
+    <b>config.py</b>              <span class="c">rutas, modelo de Whisper, enum de emociones</span>
+    <b>jobs.py</b>                <span class="c">registro de trabajos + bus de eventos thread-safe</span>
+  app/routes/
+    <b>audio.py</b>               <span class="c">endpoints, stream SSE, audio con Range</span>
+  app/services/
+    <span class="s">audio_io.py</span>            <span class="c">decodificación única + envolvente de picos</span>
+    <span class="s">asr.py</span>                 <span class="c">faster-whisper + corte de segmentos por turno</span>
+    <span class="s">diarize.py</span>             <span class="c">embeddings, clustering, asignación de roles</span>
+    <span class="s">prosody.py</span>             <span class="c">métricas acústicas reales</span>
+    <span class="m">llm.py</span>                 <span class="c">Gemini: traducción, emoción, resumen</span>
+    <b>pipeline.py</b>            <span class="c">orquesta las etapas y emite los eventos</span>
+
+<span class="c">frontend/src/</span>
+  <b>App.jsx</b>                  <span class="c">layout, historial, tema claro/oscuro</span>
+  <b>useAnalysis.js</b>           <span class="c">máquina de estados sobre SSE</span>
+  <b>utils.js</b>                 <span class="c">formato de tiempo, búsqueda binaria del segmento activo</span>
+  components/
+    <span class="s">Player.jsx</span>             <span class="c">waveform, franja de turnos, atajos de teclado</span>
+    <span class="s">Transcript.jsx</span>         <span class="c">resaltado por palabra, click para saltar, búsqueda</span>
+    <span class="m">Metrics.jsx</span>            <span class="c">gráficos sincronizados con el cursor de audio</span>
+    <span class="m">Summary.jsx</span>            <span class="c">resumen, riesgo, temas, indicadores</span>
+    <b>Uploader.jsx</b>           <span class="c">dropzone y barra de etapas</span></pre>
+  </section>
+
+  <!-- ============================ DECISIONES ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Los porqués</span>
+      <h2>Cuatro decisiones de fondo</h2>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>El LLM no mide</h3>
+        <p>
+          Ritmo, pausas, tono y energía salen de DSP sobre la señal. Un modelo de lenguaje
+          no oye el audio: cualquier número de «velocidad de habla» que produzca es una
+          alucinación, y no se sostiene en un informe.
+        </p>
+        <p class="before">Antes: <code>nivel_fluidez</code> lo inventaba Gemini leyendo texto</p>
+      </div>
+
+      <div class="card">
+        <h3>El tiempo es float, siempre</h3>
+        <p>
+          Los segundos viajan como número de punta a punta y se formatean recién al
+          dibujar. Guardar <code>"MM:SS"</code> y volver a parsearlo tira los decimales y
+          mete hasta un segundo de deriva.
+        </p>
+        <p class="before">Antes: <code>format_timestamp()</code> redondeaba a entero</p>
+      </div>
+
+      <div class="card">
+        <h3>Emitir apenas está listo</h3>
+        <p>
+          Las etapas se ordenan por valor percibido sobre tiempo de cómputo. Los picos
+          cuestan 4 ms y dan casi toda la sensación de «ya arrancó»; el resumen cuesta
+          20 s y puede esperar al final.
+        </p>
+        <p class="before">Antes: un único POST bloqueante devolvía todo junto</p>
+      </div>
+
+      <div class="card">
+        <h3>Normalizar por hablante</h3>
+        <p>
+          Cada métrica se convierte en z-score contra la línea de base de esa misma
+          persona. Así el gráfico dice «hoy habla más lento que de costumbre», que es la
+          pregunta clínica real.
+        </p>
+        <p class="before">Antes: escala absoluta [-1, 2] inventada por el modelo</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SALIDA ============================ -->
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">La salida</span>
+      <h2>Qué queda guardado</h2>
+    </div>
+
+    <p>
+      Cada enunciado del JSON final combina las tres fuentes: el texto y los tiempos vienen
+      del ASR, el hablante de la diarización, las métricas del DSP y la traducción del LLM.
+    </p>
+
+<pre>{
+  <span class="s">"start"</span>: 9.69,  <span class="s">"end"</span>: 12.47,          <span class="c">// float, nunca "MM:SS"</span>
+  <span class="s">"text"</span>: "Pero sí estoy muerto porque...",
+  <span class="s">"words"</span>: [ {"w": "Pero", "s": 9.69, "e": 9.94, "p": 0.98}, ... ],
+
+  <span class="s">"speaker"</span>: "SPK_1",                  <span class="c">// ← diarización</span>
+  <span class="s">"role"</span>: "Paciente",
+  <span class="s">"speaker_name"</span>: "Paciente",
+
+  <span class="s">"metrics"</span>: {                         <span class="c">// ← medido sobre la señal</span>
+    <span class="s">"articulation_rate"</span>: 9.259,        <span class="c">// sílabas/s sin pausas</span>
+    <span class="s">"pause_ratio"</span>: 0.0,
+    <span class="s">"longest_pause"</span>: 0.0,
+    <span class="s">"f0_mean"</span>: 119.9, <span class="s">"f0_std"</span>: 24.3,   <span class="c">// Hz</span>
+    <span class="s">"fluency_z"</span>: 1.902,                <span class="c">// z-score del propio paciente</span>
+    <span class="s">"arousal_z"</span>: -0.187,
+    <span class="s">"fluency_label"</span>: "Rapida"
+  },
+
+  <span class="m">"text_en"</span>: "But I am exhausted because...",   <span class="c">// ← LLM</span>
+  <span class="m">"emocion"</span>: "Certeza",
+  <span class="m">"tema"</span>: "cansancio"
+}</pre>
+
+    <div class="note">
+      <b>Una limitación honesta.</b> Las etiquetas emocionales salen del texto, no de la voz.
+      Detectar emoción acústicamente requiere un modelo de <em>speech emotion recognition</em>
+      entrenado, que no está en el sistema. Lo que sí se mide en la señal es la
+      <b>activación</b> — energía, variabilidad tonal y velocidad — que es un eje distinto y
+      complementario. Conviene decirlo así en el informe: valencia desde el texto, activación
+      desde la señal.
+    </div>
+  </section>
+
+</div>
