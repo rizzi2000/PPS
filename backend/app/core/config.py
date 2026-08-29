@@ -13,8 +13,12 @@ RESULTS_DIR = os.path.join(BASE_DIR, "results")      # JSON final por sesión
 for _d in (UPLOAD_DIR, CACHE_DIR, RESULTS_DIR):
     os.makedirs(_d, exist_ok=True)
 
+# Sin uso: la seleccion de proveedor y modelo vive en services/llm.py, que lee
+# GEMINI_MODEL, GEMINI_MODEL_BULK, CLAUDE_MODEL y LLM_PROVIDER por su cuenta.
+# Se conservan porque importar este modulo dispara load_dotenv(), que es lo que
+# hace que esas variables esten disponibles. Cambiarlas aca no tiene efecto.
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 # --- ASR ---------------------------------------------------------------
 # En CPU de 2 núcleos, "small" con cuantización int8 es el punto dulce:
