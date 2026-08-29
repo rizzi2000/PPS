@@ -28,13 +28,21 @@ app.include_router(audio.router, prefix="/api", tags=["Sesiones"])
 
 @app.get("/api/health")
 def health():
-    from app.core.config import (GEMINI_API_KEY, WHISPER_COMPUTE,
-                                 WHISPER_MODEL)
+    from app.core.config import WHISPER_COMPUTE, WHISPER_DEVICE, WHISPER_MODEL
+    from app.services import diarize, llm
+
     return {
         "status": "ok",
-        "whisper_model": WHISPER_MODEL,
-        "compute_type": WHISPER_COMPUTE,
-        "gemini_configured": bool(GEMINI_API_KEY),
+        "asr": {
+            "modelo": WHISPER_MODEL,
+            "compute_type": WHISPER_COMPUTE,
+            "device": WHISPER_DEVICE,
+        },
+        "diarizacion": {
+            # ECAPA sólo figura como cargado después del warmup.
+            "backend": "ecapa" if diarize._encoder is not None else "mfcc",
+        },
+        "llm": llm.describe(),
     }
 
 

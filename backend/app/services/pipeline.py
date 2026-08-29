@@ -11,7 +11,7 @@ import json
 import os
 import time
 
-from ..core.config import RESULTS_DIR
+from ..core.config import RESULTS_DIR, WHISPER_MODEL
 from ..core.jobs import Job
 from . import asr, audio_io, diarize, llm, prosody
 
@@ -132,6 +132,13 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
             "duration": round(duration, 2),
             "created_at": job.created_at,
             "elapsed": round(time.time() - t0, 1),
+            # Procedencia: con qué se generó este análisis. Necesario para poder
+            # citar la fuente en un informe y para reproducir resultados.
+            "modelos": {
+                "asr": WHISPER_MODEL,
+                "diarizacion": "ecapa" if diarize._encoder is not None else "mfcc",
+                "llm": llm.describe(),
+            },
             "speakers": {"roles": roles, "names": speaker_names, "stats": stats},
             "summary": summary,
             "segments": segments,

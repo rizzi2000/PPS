@@ -23,7 +23,7 @@ audio ──► ffmpeg ──► PCM 16 kHz mono (se decodifica UNA sola vez)
       └── waveform ◄──────┴────► corte por turnos ◄────────────────┘
           (0.3 s)                      │
                                        ▼
-                            Gemini (chunks en paralelo)
+                        Gemini/Claude (chunks en paralelo)
                             traducción + emoción + resumen
 ```
 
@@ -42,7 +42,7 @@ va llenando en vivo y las métricas se pintan cuando están listas.
 | VAD | **Silero** (integrado en faster-whisper) | saltea silencios: −20/40 % de cómputo en sesiones con pausas largas |
 | Diarización | **scikit-learn** (clustering) + MFCC, o **ECAPA-TDNN** opcional | separa voces por señal, no por texto |
 | Prosodia | **numpy** / **scipy** / **librosa** | F0 por autocorrelación FFT, RMS, tasa silábica |
-| LLM | **Gemini Flash** | traducción, emoción textual, resumen clínico |
+| LLM | **Gemini Flash** (o **Claude**) | traducción, emoción textual, resumen clínico — intercambiable con `LLM_PROVIDER` |
 | Front | **React 19** + Vite | — |
 | Waveform | **wavesurfer.js 7** | acepta peaks precalculados → dibuja sin decodificar |
 | Gráficos | **Recharts** | paleta validada para daltonismo, modo claro/oscuro |
@@ -76,10 +76,14 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-Creá `backend/.env` (o en la raíz del repo):
+Creá `backend/.env` (o en la raíz del repo). Ver [.env.example](backend/.env.example)
+para la lista completa:
 
 ```ini
 GEMINI_API_KEY=tu_api_key_de_google_ai_studio
+
+# Opcional: usar Claude en vez de Gemini (requiere créditos de API aparte)
+# ANTHROPIC_API_KEY=tu_api_key_de_anthropic
 
 # Opcionales
 WHISPER_MODEL=small          # tiny | base | small | medium | large-v3
@@ -89,9 +93,38 @@ CPU_THREADS=4
 MAX_UPLOAD_MB=300
 ```
 
-> La API key se saca gratis en <https://aistudio.google.com/apikey>.
-> El plan gratuito tiene cuota diaria: si se agota, el análisis igual termina
-> pero el resumen y la traducción quedan vacíos (error 429 en el log).
+### Elegir proveedor de LLM
+
+El LLM sólo traduce, clasifica emoción y redacta el resumen. Si falla o se queda
+sin cuota, **el análisis de señal se completa igual**: transcripción, hablantes
+y métricas no dependen de él.
+
+**El proveedor se elige solo** según qué API key esté cargada (prefiere Claude si
+están las dos). `LLM_PROVIDER=claude|gemini` fuerza uno.
+
+| | Gemini Flash (por defecto) | Claude (`claude-opus-5`) |
+|---|---|---|
+| Costo | Gratis, con cuota diaria | ~US$0.15–0.80 por sesión de 25 min según modelo |
+| Emociones fuera del enum | Se corrigen en código | Imposibles: el enum va en el esquema de salida |
+| Contenido sensible | Se desactivan los filtros | Fallback automático de servidor ante rechazo |
+
+> **Claude Pro/Max NO habilita la API.** Son productos con facturación separada:
+> la suscripción cubre claude.ai y Claude Code, no llamadas desde tu backend.
+> Los créditos de API se compran en <https://console.anthropic.com>.
+
+La API key de Gemini se saca gratis en <https://aistudio.google.com/apikey>.
+
+**Sobre la cuota gratuita.** El límite es por día *y por modelo* (20 requests/día
+en el flash más nuevo). Para estirarlo, el sistema reparte la carga:
+
+| Tarea | Modelo | Por qué |
+|---|---|---|
+| Traducción + emoción | `gemini-flash-lite-latest` | muchas requests, tarea mecánica; cupo propio |
+| Resumen clínico | `gemini-flash-latest` | una sola request, es donde importa la calidad |
+
+Si igual se agota, el resumen reintenta con el modelo liviano antes de rendirse,
+y ante un límite por minuto reintenta con backoff. En el peor caso quedan vacíos
+sólo el resumen y la traducción: **el análisis de señal se completa siempre**.
 
 **Nota Windows:** ECAPA se descarga de HuggingFace y speechbrain intenta crear
 un symlink, que Windows bloquea sin modo desarrollador (`WinError 1314`). El
@@ -127,6 +160,40 @@ Abrí <http://localhost:5173>. La primera ejecución descarga el modelo Whisper
 (~480 MB para `small`); las siguientes arrancan al instante.
 
 Docs interactivas de la API: <http://127.0.0.1:8000/docs>
+
+---
+
+## Ver qué modelos se están usando
+
+```powershell
+curl http://127.0.0.1:8000/api/health
+```
+
+```json
+{
+  "asr":          { "modelo": "small", "compute_type": "int8", "device": "cpu" },
+  "diarizacion":  { "backend": "ecapa" },
+  "llm": {
+    "proveedor": "gemini",
+    "modelos":   { "resumen": "gemini-flash-latest",
+                   "traduccion": "gemini-flash-lite-latest" },
+    "version_resuelta": { "gemini-flash-lite-latest": "gemini-3.5-flash-lite" }
+  }
+}
+```
+
+`modelos` son los alias que pediste; **`version_resuelta` es el modelo concreto
+que efectivamente respondió**. La diferencia importa: `gemini-flash-latest` es un
+alias móvil que hoy apunta a `gemini-3.7-flash` y mañana puede apuntar a otro.
+Se completa después de la primera llamada real de cada modelo.
+
+`diarizacion.backend` dice `mfcc` hasta que ECAPA termina de cargar (~40 s
+después de arrancar el servidor); si sigue diciendo `mfcc` después de eso, ECAPA
+no se pudo cargar.
+
+**Cada sesión guarda su propia procedencia** en `results/{job_id}.json`, bajo la
+clave `modelos`. Para un informe académico eso es lo que permite decir con qué se
+generó cada resultado, y reproducirlo después.
 
 ---
 
@@ -197,7 +264,7 @@ backend/
     asr.py                     faster-whisper, palabras, corte por turnos
     diarize.py                 embeddings + clustering + asignación de roles
     prosody.py                 métricas acústicas reales
-    llm.py                     Gemini: traducción, emoción, resumen
+    llm.py                     Gemini/Claude: traducción, emoción, resumen
     pipeline.py                orquestación por etapas
 frontend/src/
   App.jsx                      layout y estado general
