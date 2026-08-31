@@ -6,6 +6,7 @@ import { Dropzone, ProgressRail } from './components/Uploader'
 import Player from './components/Player'
 import Transcript from './components/Transcript'
 import Metrics from './components/Metrics'
+import MetricsLab from './components/MetricsLab'
 import Summary from './components/Summary'
 import './styles.css'
 
@@ -15,6 +16,7 @@ export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('nv-theme') || 'system')
   const [sessions, setSessions] = useState([])
   const [showHistory, setShowHistory] = useState(false)
+  const [labOpen, setLabOpen] = useState(false)
   const playerRef = useRef(null)
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function App() {
 
   const handleFile = useCallback((file) => {
     setCurrentTime(0)
+    setLabOpen(false)
     start(file)
   }, [start])
 
@@ -44,6 +47,7 @@ export default function App() {
     try {
       const data = await getSession(id)
       setCurrentTime(0)
+      setLabOpen(false)
       load(data)
       setShowHistory(false)
     } catch { /* sesión aún en proceso */ }
@@ -144,9 +148,23 @@ export default function App() {
               duration={state.duration}
               currentTime={currentTime}
               onSeek={handleSeek}
+              onExpand={() => setLabOpen(true)}
             />
           </div>
         </div>
+      )}
+
+      {labOpen && (
+        <MetricsLab
+          segments={state.segments}
+          stats={state.stats}
+          roles={state.roles}
+          names={state.names}
+          duration={state.duration}
+          currentTime={currentTime}
+          onSeek={handleSeek}
+          onClose={() => setLabOpen(false)}
+        />
       )}
 
       {state.status === 'error' && !busy && (

@@ -276,30 +276,45 @@ def _claude_json(system, prompt, schema, effort):
 # Backend: Gemini
 # ---------------------------------------------------------------------------
 
-_SAFETY = {
-    "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
-    "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
-    "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
-    "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
-}
+# Material clinico: los filtros por defecto bloquean relatos de autolesion o
+# ideacion suicida, que es justo lo que hay que poder analizar.
+_SAFETY_CATEGORIES = (
+    "HARM_CATEGORY_HARASSMENT",
+    "HARM_CATEGORY_HATE_SPEECH",
+    "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "HARM_CATEGORY_DANGEROUS_CONTENT",
+)
+
+_gclient = None
+
+
+def _google():
+    """Cliente del SDK google-genai (sucesor de google-generativeai)."""
+    global _gclient
+    if _gclient is None:
+        from google import genai
+        _gclient = genai.Client(api_key=GEMINI_API_KEY)
+    return _gclient
 
 
 def _gemini_json(system, prompt, schema, effort, model_name=None):
-    import google.generativeai as genai
+    from google.genai import types
 
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(
-        model_name=model_name or GEMINI_MODEL,
-        system_instruction=system,
-        safety_settings=_SAFETY,
-    )
-    resp = model.generate_content(
-        prompt,
-        generation_config=genai.GenerationConfig(
-            response_mime_type="application/json",
+    resp = _google().models.generate_content(
+        model=model_name or GEMINI_MODEL,
+        contents=prompt,
+        config=types.GenerateContentConfig(
+            system_instruction=system,
             temperature=0.15,
+            response_mime_type="application/json",
+            safety_settings=[
+                types.SafetySetting(category=c, threshold="BLOCK_NONE")
+                for c in _SAFETY_CATEGORIES
+            ],
+            http_options=types.HttpOptions(timeout=180_000),  # milisegundos
+            # No usamos herramientas; apagarlo evita el aviso del SDK.
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         ),
-        request_options={"timeout": 180},
     )
     # "gemini-flash-latest" es un alias movil; model_version trae la version
     # concreta que atendio la request (ej: "gemini-3.5-flash-lite").
@@ -333,17 +348,29 @@ def _is_rate_limit(exc) -> bool:
     return "429" in txt or "quota" in txt or "rate limit" in txt or "resource_exhausted" in txt
 
 
+def _is_overloaded(exc) -> bool:
+    """Modelo saturado: 503 UNAVAILABLE. Transitorio, conviene reintentar."""
+    txt = str(exc).lower()
+    return "503" in txt or "unavailable" in txt or "overloaded" in txt
+
+
 def _is_daily_quota(exc) -> bool:
     """Cupo diario agotado: esperar no lo recupera, no tiene sentido reintentar."""
     return "perday" in str(exc).lower().replace("_", "").replace("-", "")
 
 
-def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
-    """Ejecuta la consulta reintentando ante limite de tasa.
+def _retryable(exc) -> bool:
+    if _is_daily_quota(exc):
+        return False   # el cupo diario no se recupera esperando
+    return _is_rate_limit(exc) or _is_overloaded(exc)
 
-    Con Gemini gratuito el 429 es esperable: los chunks en paralelo consumen
-    el cupo por minuto y la llamada siguiente rebota. Esperar y reintentar
-    recupera la sesion en vez de dejarla sin resumen.
+
+def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
+    """Ejecuta la consulta reintentando ante fallos transitorios.
+
+    Dos casos frecuentes con Gemini gratuito: el 429 por limite de tasa (los
+    chunks en paralelo consumen el cupo por minuto) y el 503 por saturacion
+    del modelo. Ambos se recuperan esperando; el cupo diario agotado no.
     """
     delay = 8.0
     for attempt in range(attempts):
@@ -353,10 +380,11 @@ def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
                 return _coerce(_gemini_json(system, prompt, schema, effort, mdl), schema)
             return _claude_json(system, prompt, schema, effort)
         except Exception as e:  # noqa: BLE001
-            if not _is_rate_limit(e) or _is_daily_quota(e) or attempt == attempts - 1:
+            if not _retryable(e) or attempt == attempts - 1:
                 raise
-            print("[LLM/{}] limite de tasa, reintento {}/{} en {:.0f}s".format(
-                PROVIDER, attempt + 1, attempts - 1, delay))
+            motivo = "saturado" if _is_overloaded(e) else "limite de tasa"
+            print("[LLM/{}] {}, reintento {}/{} en {:.0f}s".format(
+                PROVIDER, motivo, attempt + 1, attempts - 1, delay))
             time.sleep(delay)
             delay *= 2
 
@@ -489,7 +517,7 @@ def clinical_summary(segments, stats):
     except Exception as e:  # noqa: BLE001
         # Si se agoto el cupo diario del modelo principal, un resumen del modelo
         # liviano es mejor que ninguno: la sesion no se queda sin nota clinica.
-        if PROVIDER == "gemini" and _is_rate_limit(e):
+        if PROVIDER == "gemini" and _retryable(e):
             print("[LLM/gemini] cupo agotado en {}, reintento con {}".format(
                 GEMINI_MODEL, GEMINI_MODEL_BULK))
             try:

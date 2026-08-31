@@ -120,6 +120,8 @@ def enrich(samples: np.ndarray, segments: list[dict]) -> list[dict]:
     for seg in segments:
         seg["metrics"] = segment_metrics(samples, seg)
 
+    _measure_holds(segments, samples)
+
     by_speaker: dict[str, list[dict]] = {}
     for seg in segments:
         by_speaker.setdefault(seg.get("speaker", "SPK_0"), []).append(seg)
@@ -146,8 +148,61 @@ def enrich(samples: np.ndarray, segments: list[dict]) -> list[dict]:
     return segments
 
 
+BLOCK_S = 2.0   # silencio a partir del cual hablamos de bloqueo
+
+
+def _measure_holds(segments: list[dict], samples: np.ndarray) -> None:
+    """Mide el silencio que precede a cada turno cuando el hablante no cambió.
+
+    Es necesario porque el VAD del ASR corta los segmentos en silencios de más
+    de 400 ms: una pausa larga deja de ser un hueco DENTRO del enunciado y pasa
+    a ser el corte ENTRE dos enunciados. Mirando sólo `longest_pause` (huecos
+    entre palabras) el silencio clínicamente interesante —el paciente se calla
+    varios segundos y después retoma— no aparecía en ningún lado.
+
+    Dos condiciones para contarlo:
+
+    1. Que nadie más haya hablado en el medio. Si contestó el terapeuta, el
+       silencio es un turno de conversación, no un bloqueo.
+    2. Que el audio esté efectivamente callado. Un hueco en la transcripción
+       no es un silencio: puede ser habla que el ASR no reconoció (ruido,
+       voz lejana, solapamiento). Sin esta verificación un fallo de
+       transcripción se reportaría como un bloqueo de 20 segundos que nunca
+       ocurrió, que es exactamente el tipo de dato falso que no puede entrar
+       en una nota clínica.
+    """
+    ref = float(np.sqrt(np.mean(samples ** 2))) if samples.size else 0.0
+    quiet = ref * 0.15   # relativo: los niveles de grabación varían mucho
+
+    ordered = sorted(segments, key=lambda s: s["start"])
+    for i, seg in enumerate(ordered):
+        gap = 0.0
+        if i > 0:
+            prev = ordered[i - 1]
+            if prev.get("speaker") == seg.get("speaker"):
+                gap = max(0.0, seg["start"] - prev["end"])
+
+        verified = 0.0
+        if gap > 0.3:
+            a = int(ordered[i - 1]["end"] * SAMPLE_RATE)
+            b = min(int(seg["start"] * SAMPLE_RATE), samples.size)
+            chunk = samples[a:b]
+            if chunk.size:
+                rms = float(np.sqrt(np.mean(chunk ** 2)))
+                if rms <= quiet:
+                    verified = gap
+                else:
+                    # Hueco con audio: no es silencio, es transcripción perdida.
+                    seg["metrics"]["gap_unvoiced"] = round(gap, 2)
+
+        seg["metrics"]["hold_before"] = round(verified, 2)
+        # Silencio máximo atribuible al turno, venga de donde venga.
+        seg["metrics"]["silence"] = round(
+            max(verified, seg["metrics"]["longest_pause"]), 2)
+
+
 def _label(fluency: float, m: dict) -> str:
-    if m["longest_pause"] >= 2.5:
+    if m.get("silence", m["longest_pause"]) >= BLOCK_S:
         return "Bloqueo"
     if fluency <= -0.9:
         return "Lenta"

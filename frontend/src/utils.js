@@ -40,3 +40,24 @@ export function fluencyTone(label) {
   if (label === 'Lenta' || label === 'Rapida') return 'warn'
   return null
 }
+
+/** Configuracion de cada serie graficada: dominio, ticks y formato.
+ *  Vive aca y no en charts.jsx porque un archivo de componentes que
+ *  exporta constantes rompe el fast refresh de React. */
+export const SERIES = {
+  fluidez: {
+    key: 'fluidez', label: 'Fluidez',
+    domain: [-2.6, 2.6], ticks: [-2, 0, 2],
+    fmt: (v) => (v == null ? '—' : v.toFixed(2)),
+  },
+  activacion: {
+    key: 'activacion', label: 'Activación',
+    domain: [-2.6, 2.6], ticks: [-2, 0, 2],
+    fmt: (v) => (v == null ? '—' : v.toFixed(2)),
+  },
+  rate: {
+    key: 'rate', label: 'Ritmo',
+    domain: [0, 'dataMax'], ticks: undefined,
+    fmt: (v) => (v == null ? '—' : `${v} síl/s`),
+  },
+}

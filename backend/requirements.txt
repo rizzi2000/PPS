@@ -18,11 +18,7 @@ scikit-learn>=1.5
 anthropic>=1.0
 
 # LLM_PROVIDER=gemini
-# NOTA: google-genai es el SDK sucesor y google-generativeai está deprecado,
-# pero llm.py todavía hace `import google.generativeai`. Cambiar la dependencia
-# sin migrar el código rompe el arranque, así que se mantiene el paquete que el
-# código usa hoy. La migración a google-genai queda pendiente.
-google-generativeai>=0.8
+google-genai
 
 # --- Diarización con ECAPA-TDNN (RECOMENDADO) ---
 # Sin esto el sistema cae al fallback MFCC, que falla cuando las dos voces
