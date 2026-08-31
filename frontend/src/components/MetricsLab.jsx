@@ -95,32 +95,32 @@ export default function MetricsLab({
               <div className="lab-charts">
                 <section className="lab-chart">
                   <header>
-                    <h3>Fluidez del habla</h3>
-                    <p>z respecto de su propia base · negativo = más lento y entrecortado</p>
+                    <h3>Velocidad del habla</h3>
+                    <p>Comparada con la forma habitual de hablar de esta persona en la sesión</p>
                   </header>
-                  <Trend data={m.data} series={SERIES.fluidez} duration={duration}
+                  <Trend data={m.data} series={SERIES.velocidad} duration={duration}
                          currentTime={currentTime} onSeek={onSeek} height={190}
-                         band={[-0.75, 0.75, 'rango habitual']} zero blocks={m.blocks} />
+                         band={[-0.8, 0.8, 'lo habitual en esta persona']} zero blocks={m.blocks} />
                 </section>
 
                 <section className="lab-chart">
                   <header>
-                    <h3>Activación emocional</h3>
-                    <p>energía + variabilidad tonal + velocidad</p>
+                    <h3>Intensidad de la voz</h3>
+                    <p>Cuánto sube el volumen y el tono. Indica activación, no una emoción concreta</p>
                   </header>
-                  <Trend data={m.data} series={SERIES.activacion} duration={duration}
+                  <Trend data={m.data} series={SERIES.intensidad} duration={duration}
                          currentTime={currentTime} onSeek={onSeek} height={190}
-                         band={[-0.75, 0.75, 'rango habitual']} zero />
+                         band={[-0.8, 0.8, 'lo habitual en esta persona']} zero />
                 </section>
 
                 <section className="lab-chart">
                   <header>
-                    <h3>Ritmo de habla</h3>
-                    <p>sílabas por segundo, sin contar pausas · arrastrá abajo para acotar el tramo</p>
+                    <h3>Sílabas por segundo</h3>
+                    <p>El valor absoluto, sin comparar. Arrastrá la barra de abajo para acotar el tramo</p>
                   </header>
                   <Trend data={m.data} series={SERIES.rate} duration={duration}
                          currentTime={currentTime} onSeek={onSeek} height={210}
-                         band={[5, 7, 'típico en español']} brush />
+                         band={[5, 7, 'típico en español rioplatense']} brush />
                 </section>
               </div>
 
@@ -169,7 +169,7 @@ export default function MetricsLab({
 
                 <section className="lab-block">
                   <h3>Momentos destacados</h3>
-                  <p className="muted">Los extremos de fluidez, para escuchar primero.</p>
+                  <p className="muted">Lo más lento y lo más rápido de la sesión.</p>
                   <ul className="jump-list">
                     {[
                       ['Más lento', m.extremes.lento],
@@ -211,7 +211,7 @@ export default function MetricsLab({
                 <table>
                   <thead>
                     <tr>
-                      <th>Inicio</th><th className="num">Fluidez</th><th className="num">Activación</th>
+                      <th>Inicio</th><th>Velocidad</th><th>Intensidad</th>
                       <th className="num">Ritmo</th><th className="num">Silencio</th>
                       <th className="num">Tono</th><th>Estado</th><th>Emoción</th><th>Texto</th>
                     </tr>
@@ -220,8 +220,8 @@ export default function MetricsLab({
                     {m.data.map((d) => (
                       <tr key={d.start} onClick={() => onSeek(d.start)} className="clickable">
                         <td className="num">{fmtTime(d.start)}</td>
-                        <td className="num">{d.fluidez?.toFixed(2)}</td>
-                        <td className="num">{d.activacion?.toFixed(2)}</td>
+                        <td>{d.velLabel}</td>
+                        <td>{d.intLabel}</td>
                         <td className="num">{d.rate}</td>
                         <td className="num">{d.pausa || '—'}</td>
                         <td className="num">{d.f0 || '—'}</td>

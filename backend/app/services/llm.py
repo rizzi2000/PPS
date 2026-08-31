@@ -175,7 +175,8 @@ Para CADA enunciado devolvé:
 - "i": el índice exacto que te di (no lo cambies).
 - "en": traducción fiel al inglés, natural y no literal.
 - "emocion": UNA etiqueta de la lista permitida.
-- "tema": tópico en 1 a 3 palabras, en español (ej: "familia", "trabajo", "insomnio").
+- "tema": UNA palabra común, en español (ej: "familia", "trabajo", "sueño",
+  "pareja", "estudio", "salud"). Nada de términos técnicos ni compuestos.
 
 Devolvé exactamente {n} objetos, uno por enunciado. No agregues ni omitas.
 
@@ -200,20 +201,26 @@ def _summary_prompt(segments, stats):
 MÉTRICAS ACÚSTICAS OBJETIVAS (medidas sobre la señal, no estimadas):
 {metrics_txt}
 
-Cómo interpretarlas: en español rioplatense la tasa de articulación normal ronda
-5-7 sílabas/s. `talk_share` es el porcentaje del tiempo total de habla.
+Cómo interpretarlas: en español rioplatense la velocidad normal va de 5 a 7
+sílabas/s. `talk_share` es el porcentaje del tiempo total de habla.
+
+IMPORTANTE con las métricas: no describas un valor como alto, bajo, elevado ni
+acelerado si cae dentro del rango normal. Si está dentro del rango, o no lo
+menciones o decí que es normal. Inventar una alteración que los números no
+muestran arruina el informe.
 
 TRANSCRIPCIÓN:
 {transcript}
 
 Devolvé:
-- "resumen": 150-250 palabras. Motivo de consulta, temas centrales, estado
-  emocional, recursos y dificultades observadas.
+- "resumen": 120-180 palabras, en lenguaje llano y directo. Qué trajo la
+  persona, cómo se la vio, qué dificultades aparecieron. Evitá jerga.
 - "riesgo": nivel de riesgo clínico global.
 - "justificacion_riesgo": 1-2 frases explicando por qué asignaste ese nivel.
-- "temas": 4 a 7 temas principales, 1-3 palabras cada uno.
-- "indicadores": 3 a 5 observaciones clínicas concretas, citando el segundo
-  cuando corresponda.
+- "temas": 3 a 5 temas, UNA palabra común cada uno (ej: "trabajo", "familia",
+  "sueño"). Evitá jerga clínica del tipo "agotamiento psicofísico".
+- "indicadores": 3 observaciones concretas y en lenguaje simple, citando el
+  segundo cuando corresponda.
 - "sugerencias": 2 a 4 líneas de trabajo para próximas sesiones.
 
 TODO en español."""
@@ -404,14 +411,17 @@ def _normalize_emotion(value):
     if key in _EMO_LOOKUP:
         return _EMO_LOOKUP[key]
     aliases = {
-        "neutro": "Neutral", "alegre": "Alegria", "felicidad": "Alegria",
-        "entusiasmo": "Alegria", "agrado": "Alegria", "inspiracion": "Alegria",
-        "miedo": "Ansiedad", "preocupacion": "Ansiedad", "nervios": "Ansiedad",
-        "angustia": "Ansiedad", "frustracion": "Enojo", "ira": "Enojo",
-        "molestia": "Enojo", "pena": "Tristeza", "dolor": "Tristeza",
-        "melancolia": "Tristeza", "duda": "Confusion", "seguridad": "Certeza",
-        "determinacion": "Certeza", "reflexivo": "Reflexion",
-        "interes": "Reflexion", "empatia": "Reflexion", "calma": "Neutral",
+        "neutro": "Neutral", "calma": "Neutral", "relajacion": "Neutral",
+        "reflexion": "Neutral", "certeza": "Neutral", "seguridad": "Neutral",
+        "alegre": "Alegria", "felicidad": "Alegria", "entusiasmo": "Alegria",
+        "agrado": "Alegria", "esperanza": "Alegria",
+        "pena": "Tristeza", "dolor": "Tristeza", "melancolia": "Tristeza",
+        "angustia": "Tristeza", "desesperanza": "Tristeza",
+        "ira": "Enojo", "bronca": "Enojo", "molestia": "Enojo", "rabia": "Enojo",
+        "impotencia": "Frustracion", "cansancio": "Frustracion",
+        "hartazgo": "Frustracion", "resignacion": "Frustracion",
+        "ansiedad": "Frustracion", "preocupacion": "Frustracion",
+        "duda": "Confusion", "desconcierto": "Confusion", "incertidumbre": "Confusion",
     }
     return aliases.get(key, "Neutral")
 

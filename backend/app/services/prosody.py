@@ -135,20 +135,29 @@ def enrich(samples: np.ndarray, segments: list[dict]) -> list[dict]:
         z_rate, z_energy, z_f0, z_pause = _z(rate), _z(energy), _z(f0v), _z(pause)
 
         for i, s in enumerate(segs):
-            # Fluidez: rápido y sin pausas = alto; lento y entrecortado = bajo.
-            fluency = float(np.clip(z_rate[i] * 0.7 - z_pause[i] * 0.6, -3, 3))
-            # Activación: energía + variabilidad tonal + velocidad.
-            arousal = float(np.clip(
-                0.4 * z_energy[i] + 0.35 * z_f0[i] + 0.25 * z_rate[i], -3, 3))
+            # VELOCIDAD: sílabas por segundo y nada más. Antes esta métrica
+            # mezclaba ritmo con pausas y el resultado no era interpretable como
+            # "habla rápido o lento", que es la pregunta que interesa responder.
+            speed = float(np.clip(z_rate[i], -3, 3))
 
-            s["metrics"]["fluency_z"] = round(fluency, 3)
-            s["metrics"]["arousal_z"] = round(arousal, 3)
-            s["metrics"]["fluency_label"] = _label(fluency, s["metrics"])
+            # INTENSIDAD: cuánto sube la voz. Volumen + variación del tono.
+            # No dice qué emoción es, pero sí cuán activada está la persona.
+            intensity = float(np.clip(0.55 * z_energy[i] + 0.45 * z_f0[i], -3, 3))
+
+            m = s["metrics"]
+            m["speed_z"] = round(speed, 3)
+            m["intensity_z"] = round(intensity, 3)
+            m["speed_label"] = _speed_label(speed)
+            m["intensity_label"] = _level_label(intensity, ("Baja", "Normal", "Alta"))
+            # Entrecortado = muchas pausas internas, independiente de la velocidad.
+            m["choppy"] = bool(z_pause[i] >= 1.0)
+            m["blocked"] = bool(m.get("silence", 0) >= BLOCK_S)
 
     return segments
 
 
-BLOCK_S = 2.0   # silencio a partir del cual hablamos de bloqueo
+BLOCK_S = 2.0     # silencio a partir del cual hablamos de bloqueo
+LEVEL_Z = 0.8     # cuánto hay que desviarse para dejar de ser "normal"
 
 
 def _measure_holds(segments: list[dict], samples: np.ndarray) -> None:
@@ -201,14 +210,23 @@ def _measure_holds(segments: list[dict], samples: np.ndarray) -> None:
             max(verified, seg["metrics"]["longest_pause"]), 2)
 
 
-def _label(fluency: float, m: dict) -> str:
-    if m.get("silence", m["longest_pause"]) >= BLOCK_S:
-        return "Bloqueo"
-    if fluency <= -0.9:
-        return "Lenta"
-    if fluency >= 0.9:
-        return "Rapida"
-    return "Normal"
+def _level_label(z: float, names: tuple[str, str, str]) -> str:
+    """Tres niveles a partir de un z-score: bajo, normal, alto."""
+    low, mid, high = names
+    if z <= -LEVEL_Z:
+        return low
+    if z >= LEVEL_Z:
+        return high
+    return mid
+
+
+def _speed_label(z: float) -> str:
+    """Velocidad del habla comparada con la base del propio hablante.
+
+    Sólo tres valores. Un "Bloqueo" no es una velocidad sino un silencio, así
+    que se reporta aparte (`blocked`) en lugar de mezclarlo acá.
+    """
+    return _level_label(z, ("Lento", "Normal", "Rapido"))
 
 
 def speaker_summary(segments: list[dict]) -> dict:

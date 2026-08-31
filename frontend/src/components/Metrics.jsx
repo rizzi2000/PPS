@@ -39,7 +39,7 @@ export default function Metrics({
             {st && (
               <div className="tiles" style={{ marginBottom: 16 }}>
                 <Tile label="Habla" value={st.talk_share} unit="%" />
-                <Tile label="Ritmo" value={st.avg_rate} unit="síl/s" />
+                <Tile label="Velocidad" value={m.speedSummary} hint={`${st.avg_rate} síl/s`} />
                 <Tile label="Tono" value={st.f0_median || '—'} unit={st.f0_median ? 'Hz' : ''} />
                 <Tile label="Bloqueos" value={m.blocks.length}
                       tone={m.blocks.length ? 'alert' : null} />
@@ -57,15 +57,15 @@ export default function Metrics({
             )}
 
             <div className="section">
-              <p className="section-label">Fluidez</p>
-              <Trend data={m.data} series={SERIES.fluidez} duration={duration}
+              <p className="section-label">Velocidad del habla</p>
+              <Trend data={m.data} series={SERIES.velocidad} duration={duration}
                      currentTime={currentTime} onSeek={onSeek} height={104}
                      band={[-0.75, 0.75]} zero blocks={m.blocks} />
             </div>
 
             <div className="section">
-              <p className="section-label">Activación</p>
-              <Trend data={m.data} series={SERIES.activacion} duration={duration}
+              <p className="section-label">Intensidad de la voz</p>
+              <Trend data={m.data} series={SERIES.intensidad} duration={duration}
                      currentTime={currentTime} onSeek={onSeek} height={104}
                      band={[-0.75, 0.75]} zero />
             </div>

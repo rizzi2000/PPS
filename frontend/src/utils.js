@@ -30,34 +30,38 @@ export function findActiveIndex(segments, t) {
 }
 
 export const EMOTION_ORDER = [
-  'Alegria', 'Certeza', 'Reflexion', 'Neutral',
-  'Confusion', 'Ansiedad', 'Tristeza', 'Enojo',
+  'Alegria', 'Neutral', 'Confusion', 'Frustracion', 'Tristeza', 'Enojo',
 ]
 
-/** Fluidez -> nivel de alerta visual. Sólo usamos colores de estado acá. */
-export function fluencyTone(label) {
+/** Etiqueta de estado -> color. Solo se usan colores de estado aca. */
+export function levelTone(label) {
   if (label === 'Bloqueo') return 'critical'
-  if (label === 'Lenta' || label === 'Rapida') return 'warn'
+  if (['Lento', 'Rapido', 'Alta', 'Baja'].includes(label)) return 'warn'
   return null
 }
 
-/** Configuracion de cada serie graficada: dominio, ticks y formato.
+/** Configuracion de cada serie graficada.
  *  Vive aca y no en charts.jsx porque un archivo de componentes que
- *  exporta constantes rompe el fast refresh de React. */
+ *  exporta constantes rompe el fast refresh de React.
+ *
+ *  Los ejes se rotulan con palabras, no con el z-score: el numero es el que
+ *  se mide, pero "Lento / Normal / Rapido" es lo que se lee de un vistazo. */
 export const SERIES = {
-  fluidez: {
-    key: 'fluidez', label: 'Fluidez',
-    domain: [-2.6, 2.6], ticks: [-2, 0, 2],
-    fmt: (v) => (v == null ? '—' : v.toFixed(2)),
+  velocidad: {
+    key: 'velocidad', label: 'Velocidad',
+    domain: [-2.6, 2.6], ticks: [-1.6, 0, 1.6],
+    tickNames: { '-1.6': 'Lento', 0: 'Normal', '1.6': 'Rapido' },
+    fmt: (v, d) => (d?.velLabel ?? (v == null ? '—' : v.toFixed(2))),
   },
-  activacion: {
-    key: 'activacion', label: 'Activación',
-    domain: [-2.6, 2.6], ticks: [-2, 0, 2],
-    fmt: (v) => (v == null ? '—' : v.toFixed(2)),
+  intensidad: {
+    key: 'intensidad', label: 'Intensidad de la voz',
+    domain: [-2.6, 2.6], ticks: [-1.6, 0, 1.6],
+    tickNames: { '-1.6': 'Baja', 0: 'Normal', '1.6': 'Alta' },
+    fmt: (v, d) => (d?.intLabel ?? (v == null ? '—' : v.toFixed(2))),
   },
   rate: {
-    key: 'rate', label: 'Ritmo',
+    key: 'rate', label: 'Silabas por segundo',
     domain: [0, 'dataMax'], ticks: undefined,
-    fmt: (v) => (v == null ? '—' : `${v} síl/s`),
+    fmt: (v) => (v == null ? '—' : `${v} sil/s`),
   },
 }

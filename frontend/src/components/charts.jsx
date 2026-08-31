@@ -33,9 +33,9 @@ function Tip({ active, payload, series }) {
       <div className="t">{fmtTime(d.t)}</div>
       <div className="k">
         <span className="dot" style={{ background: 'var(--spk-patient)' }} />
-        {series.label}: <b>{series.fmt(d[series.key])}</b>
+        {series.label}: <b>{series.fmt(d[series.key], d)}</b>
       </div>
-      <div className="k">Ritmo: {d.rate} síl/s</div>
+      <div className="k">{d.rate} sílabas por segundo</div>
       {d.pausa > 0.5 && <div className="k">Silencio: {d.pausa}s</div>}
       {d.emocion && <div className="k">Emoción: {d.emocion}</div>}
       <div className="k hintline">clic para ir a este momento</div>
@@ -83,9 +83,10 @@ export function Trend({
           <XAxis dataKey="t" type="number" domain={[0, duration || 'dataMax']}
                  tickFormatter={fmtTime} tick={{ fill: 'var(--ink-muted)', fontSize: 10.5 }}
                  axisLine={{ stroke: 'var(--axis)' }} tickLine={false} minTickGap={46} />
-          <YAxis domain={series.domain} width={34}
+          <YAxis domain={series.domain} width={series.tickNames ? 62 : 40}
                  tick={{ fill: 'var(--ink-muted)', fontSize: 10.5 }}
-                 axisLine={false} tickLine={false} ticks={series.ticks} />
+                 axisLine={false} tickLine={false} ticks={series.ticks}
+                 tickFormatter={(v) => series.tickNames?.[String(v)] ?? v} />
 
           <Tooltip content={<Tip series={series} />}
                    cursor={{ stroke: 'var(--ink-muted)', strokeDasharray: '3 3' }} />

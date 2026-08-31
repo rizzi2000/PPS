@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { FileText, Search, Crosshair } from 'lucide-react'
-import { fmtTime, roleClass, findActiveIndex, fluencyTone } from '../utils'
+import { fmtTime, roleClass, findActiveIndex, levelTone } from '../utils'
 
 const VIEWS = [
   { id: 'es', label: 'ES' },
@@ -128,11 +128,14 @@ export default function Transcript({ segments, currentTime, onSeek, loading }) {
                   {seg.emocion && seg.emocion !== 'Neutral' && (
                     <span className="chip">{seg.emocion}</span>
                   )}
-                  {seg.metrics?.fluency_label && seg.metrics.fluency_label !== 'Normal' && (
-                    <span className={`chip ${fluencyTone(seg.metrics.fluency_label) || ''}`}>
-                      {seg.metrics.fluency_label}
-                      {seg.metrics.longest_pause >= 2.5 &&
-                        ` · pausa ${seg.metrics.longest_pause}s`}
+                  {seg.metrics?.speed_label && seg.metrics.speed_label !== 'Normal' && (
+                    <span className={`chip ${levelTone(seg.metrics.speed_label) || ''}`}>
+                      {seg.metrics.speed_label}
+                    </span>
+                  )}
+                  {seg.metrics?.blocked && (
+                    <span className="chip critical">
+                      Silencio {seg.metrics.silence}s
                     </span>
                   )}
                   {seg.tema && <span className="chip">{seg.tema}</span>}

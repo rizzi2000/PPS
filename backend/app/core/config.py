@@ -31,7 +31,10 @@ MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "300"))
 ALLOWED_EXT = {".mp3", ".wav", ".m4a", ".ogg", ".flac", ".webm", ".mp4"}
 
 # Etiquetas cerradas: el LLM debe elegir de acá o se descarta el valor.
+# Se mantienen pocas y de uso corriente a proposito. Categorias finas como
+# "Reflexion" o "Certeza" no se distinguen de forma confiable a partir del
+# texto y ademas cuestan de interpretar cuando se ven en un grafico.
 EMOTIONS = [
-    "Neutral", "Alegria", "Tristeza", "Ansiedad",
-    "Enojo", "Reflexion", "Confusion", "Certeza",
+    "Neutral", "Alegria", "Tristeza",
+    "Enojo", "Frustracion", "Confusion",
 ]
