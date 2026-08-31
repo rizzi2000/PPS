@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { EMOTION_ORDER } from './utils'
+import { EMOTION_ORDER, levelFromZ } from './utils'
 
 /**
  * Deriva del análisis todo lo que consumen los gráficos.
@@ -16,21 +16,28 @@ export function useMetricsData(segments, stats, roles, speaker) {
     const targetRole = roles?.[target]
 
     const mine = segments.filter((s) => s.speaker === target && s.metrics)
+    const legacy = mine.length > 0 && mine[0].metrics.speed_z === undefined
 
     const data = mine.map((s) => ({
       t: (s.start + s.end) / 2,
       start: s.start,
       end: s.end,
-      velocidad: s.metrics.speed_z,
-      intensidad: s.metrics.intensity_z,
-      velLabel: s.metrics.speed_label,
-      intLabel: s.metrics.intensity_label,
+      // Compatibilidad: las sesiones analizadas antes del cambio de nombres
+      // traen fluency_z / arousal_z. Se leen igual para que los graficos no
+      // queden vacios, pero la sesion se marca como `legacy` porque la
+      // formula vieja mezclaba velocidad con pausas y no es equivalente.
+      velocidad: s.metrics.speed_z ?? s.metrics.fluency_z,
+      intensidad: s.metrics.intensity_z ?? s.metrics.arousal_z,
+      velLabel: s.metrics.speed_label
+        ?? levelFromZ(s.metrics.fluency_z, ['Lento', 'Normal', 'Rapido']),
+      intLabel: s.metrics.intensity_label
+        ?? levelFromZ(s.metrics.arousal_z, ['Baja', 'Normal', 'Alta']),
       rate: s.metrics.articulation_rate,
       // `silence` cubre tanto el hueco entre palabras como el silencio
       // previo al turno; `longest_pause` solo, se quedaba corto.
       pausa: s.metrics.silence ?? s.metrics.longest_pause,
       pauseRatio: s.metrics.pause_ratio,
-      blocked: s.metrics.blocked,
+      blocked: s.metrics.blocked ?? (s.metrics.silence ?? 0) >= 2.0,
       f0: s.metrics.f0_mean,
       label: s.metrics.speed_label,
       emocion: s.emocion,
@@ -80,6 +87,7 @@ export function useMetricsData(segments, stats, roles, speaker) {
       extremes,
       speedSummary,
       hasData: data.length > 1,
+      legacy,
     }
   }, [segments, stats, roles, speaker])
 }

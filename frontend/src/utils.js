@@ -33,6 +33,15 @@ export const EMOTION_ORDER = [
   'Alegria', 'Neutral', 'Confusion', 'Frustracion', 'Tristeza', 'Enojo',
 ]
 
+/** Tres niveles a partir de un z-score. Duplica la logica de prosody.py para
+ *  poder etiquetar sesiones analizadas antes de que el backend lo hiciera. */
+export function levelFromZ(z, [low, mid, high]) {
+  if (z == null || Number.isNaN(z)) return null
+  if (z <= -0.8) return low
+  if (z >= 0.8) return high
+  return mid
+}
+
 /** Etiqueta de estado -> color. Solo se usan colores de estado aca. */
 export function levelTone(label) {
   if (label === 'Bloqueo') return 'critical'

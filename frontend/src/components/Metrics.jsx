@@ -46,6 +46,13 @@ export default function Metrics({
               </div>
             )}
 
+            {m.legacy && (
+              <p className="legacy-note">
+                Analizada con una versión anterior: la velocidad es aproximada.
+                Reprocesá el audio para las métricas exactas.
+              </p>
+            )}
+
             {m.blocks.length > 0 && (
               <button className="alert-strip" onClick={onExpand}>
                 <AlertTriangle size={14} />

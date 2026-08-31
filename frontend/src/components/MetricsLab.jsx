@@ -75,6 +75,15 @@ export default function MetricsLab({
             <p className="empty">No hay suficientes datos de este hablante para analizar.</p>
           )}
 
+          {m.legacy && (
+            <p className="legacy-note" style={{ gridColumn: '1 / -1' }}>
+              Esta sesión se analizó antes de separar velocidad e intensidad.
+              Los valores se leen del formato anterior, donde la velocidad venía
+              mezclada con las pausas, así que son aproximados. Reprocesá el
+              audio para obtener las métricas actuales.
+            </p>
+          )}
+
           {m.hasData && st && (
             <div className="tiles lab-tiles">
               <Tile label="Tiempo de habla" value={fmtTime(st.talk_time)} hint={`${st.talk_share}% de la sesión`} />

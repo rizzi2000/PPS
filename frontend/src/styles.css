@@ -517,3 +517,11 @@ mark { background: color-mix(in srgb, var(--warning) 45%, transparent); color: i
   .lab-table { grid-column: 1; }
   .lab-backdrop { display: none; }
 }
+
+.legacy-note {
+  margin: 0 0 14px; padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+  background: color-mix(in srgb, var(--warning) 9%, transparent);
+  color: var(--ink-2); font-size: 12px; line-height: 1.45;
+}
