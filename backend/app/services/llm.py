@@ -88,9 +88,8 @@ CHUNK_SCHEMA = {
                     "i": {"type": "integer"},
                     "en": {"type": "string"},
                     "emocion": {"type": "string", "enum": EMOTIONS},
-                    "tema": {"type": "string"},
                 },
-                "required": ["i", "en", "emocion", "tema"],
+                "required": ["i", "en", "emocion"],
                 "additionalProperties": False,
             },
         }
@@ -105,12 +104,11 @@ SUMMARY_SCHEMA = {
         "resumen": {"type": "string"},
         "riesgo": {"type": "string", "enum": RIESGOS},
         "justificacion_riesgo": {"type": "string"},
-        "temas": {"type": "array", "items": {"type": "string"}},
         "indicadores": {"type": "array", "items": {"type": "string"}},
         "sugerencias": {"type": "array", "items": {"type": "string"}},
     },
     "required": ["resumen", "riesgo", "justificacion_riesgo",
-                 "temas", "indicadores", "sugerencias"],
+                 "indicadores", "sugerencias"],
     "additionalProperties": False,
 }
 
@@ -175,8 +173,6 @@ Para CADA enunciado devolvé:
 - "i": el índice exacto que te di (no lo cambies).
 - "en": traducción fiel al inglés, natural y no literal.
 - "emocion": UNA etiqueta de la lista permitida.
-- "tema": UNA palabra común, en español (ej: "familia", "trabajo", "sueño",
-  "pareja", "estudio", "salud"). Nada de términos técnicos ni compuestos.
 
 Devolvé exactamente {n} objetos, uno por enunciado. No agregues ni omitas.
 
@@ -184,7 +180,7 @@ ENUNCIADOS:
 {lines}
 
 Respondé SOLO con este JSON, sin texto alrededor:
-{{"items": [{{"i": 0, "en": "...", "emocion": "...", "tema": "..."}}]}}
+{{"items": [{{"i": 0, "en": "...", "emocion": "..."}}]}}
 
 "emocion" debe ser exactamente una de: {emociones}"""
 
@@ -217,8 +213,6 @@ Devolvé:
   persona, cómo se la vio, qué dificultades aparecieron. Evitá jerga.
 - "riesgo": nivel de riesgo clínico global.
 - "justificacion_riesgo": 1-2 frases explicando por qué asignaste ese nivel.
-- "temas": 3 a 5 temas, UNA palabra común cada uno (ej: "trabajo", "familia",
-  "sueño"). Evitá jerga clínica del tipo "agotamiento psicofísico".
 - "indicadores": 3 observaciones concretas y en lenguaje simple, citando el
   segundo cuando corresponda.
 - "sugerencias": 2 a 4 líneas de trabajo para próximas sesiones.
@@ -444,7 +438,7 @@ def _normalize_summary(data, empty):
     }
     out["riesgo"] = alias.get(riesgo, "No evaluado")
 
-    for key in ("temas", "indicadores", "sugerencias"):
+    for key in ("indicadores", "sugerencias"):
         val = out.get(key)
         if isinstance(val, str):
             # Un string donde iba una lista: lo partimos por saltos o viñetas.
@@ -476,7 +470,6 @@ def _process_chunk(args):
                 out[offset + idx] = {
                     "text_en": it.get("en", ""),
                     "emocion": _normalize_emotion(it.get("emocion")),
-                    "tema": (it.get("tema") or "").strip().lower()[:30],
                 }
         return out
     except Exception as e:  # noqa: BLE001
@@ -486,12 +479,11 @@ def _process_chunk(args):
 
 
 def translate_and_tag(segments, on_chunk=None):
-    """Enriquece los segmentos in-place con traducción, emoción y tema."""
+    """Enriquece los segmentos in-place con traducción y emoción."""
     if not is_configured():
         for s in segments:
             s.setdefault("text_en", "")
             s.setdefault("emocion", "Neutral")
-            s.setdefault("tema", "")
         return
 
     payload = [{"text": s["text"], "speaker_label": s.get("role", "?")} for s in segments]
@@ -509,13 +501,12 @@ def translate_and_tag(segments, on_chunk=None):
     for s in segments:
         s.setdefault("text_en", "")
         s.setdefault("emocion", "Neutral")
-        s.setdefault("tema", "")
 
 
 def clinical_summary(segments, stats):
     """Resumen clínico apoyado en las métricas objetivas ya calculadas."""
     empty = {"resumen": "", "riesgo": "No evaluado", "justificacion_riesgo": "",
-             "temas": [], "indicadores": [], "sugerencias": []}
+             "indicadores": [], "sugerencias": []}
 
     if not is_configured():
         var = "ANTHROPIC_API_KEY" if PROVIDER == "claude" else "GEMINI_API_KEY"
@@ -525,9 +516,11 @@ def clinical_summary(segments, stats):
     try:
         return _normalize_summary(_ask(SYSTEM_SUMMARY, prompt, SUMMARY_SCHEMA), empty)
     except Exception as e:  # noqa: BLE001
-        # Si se agoto el cupo diario del modelo principal, un resumen del modelo
-        # liviano es mejor que ninguno: la sesion no se queda sin nota clinica.
-        if PROVIDER == "gemini" and _retryable(e):
+        # Si el modelo principal no responde, un resumen del modelo liviano es
+        # mejor que ninguno. Se incluye el cupo diario agotado a proposito: no
+        # sirve reintentar el MISMO modelo, pero el lite tiene su propio cupo,
+        # asi que cambiar de modelo si resuelve el problema.
+        if PROVIDER == "gemini" and (_is_rate_limit(e) or _is_overloaded(e)):
             print("[LLM/gemini] cupo agotado en {}, reintento con {}".format(
                 GEMINI_MODEL, GEMINI_MODEL_BULK))
             try:

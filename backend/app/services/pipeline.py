@@ -116,7 +116,7 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
         llm.translate_and_tag(segments, on_chunk=on_chunk)
         job.emit("translations", [
             {"i": i, "text_en": s.get("text_en", ""),
-             "emocion": s.get("emocion", "Neutral"), "tema": s.get("tema", "")}
+             "emocion": s.get("emocion", "Neutral")}
             for i, s in enumerate(segments)
         ])
 

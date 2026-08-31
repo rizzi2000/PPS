@@ -64,7 +64,7 @@ export function useAnalysis() {
           case 'translations': {
             const segments = prev.segments.map((s, i) => {
               const t = data[i]
-              return t ? { ...s, text_en: t.text_en, emocion: t.emocion, tema: t.tema } : s
+              return t ? { ...s, text_en: t.text_en, emocion: t.emocion } : s
             })
             return { ...prev, segments }
           }

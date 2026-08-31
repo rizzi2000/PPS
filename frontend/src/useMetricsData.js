@@ -41,7 +41,6 @@ export function useMetricsData(segments, stats, roles, speaker) {
       f0: s.metrics.f0_mean,
       label: s.metrics.speed_label,
       emocion: s.emocion,
-      tema: s.tema,
       texto: s.text,
     }))
 

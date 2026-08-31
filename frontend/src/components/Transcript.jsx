@@ -138,7 +138,6 @@ export default function Transcript({ segments, currentTime, onSeek, loading }) {
                       Silencio {seg.metrics.silence}s
                     </span>
                   )}
-                  {seg.tema && <span className="chip">{seg.tema}</span>}
                 </span>
 
                 {view !== 'en' && (

@@ -40,15 +40,6 @@ export default function Summary({ summary, loading }) {
 
         <p className="prose">{summary.resumen}</p>
 
-        {summary.temas?.length > 0 && (
-          <div className="section">
-            <p className="section-label">Temas centrales</p>
-            <div className="chips">
-              {summary.temas.map((t, i) => <span className="chip" key={i}>{t}</span>)}
-            </div>
-          </div>
-        )}
-
         {summary.indicadores?.length > 0 && (
           <div className="section">
             <p className="section-label"><ListChecks size={11} style={{ verticalAlign: -1, marginRight: 5 }} />
