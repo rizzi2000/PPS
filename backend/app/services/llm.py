@@ -19,6 +19,7 @@ señal (diarize.py / prosody.py). Un modelo de lenguaje no escucha el audio.
 import json
 import os
 import re
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -30,24 +31,11 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Google
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
-# El plan gratuito limita requests por dia Y POR MODELO. Mandar las traducciones
-# (muchas requests) al modelo lite reparte la carga en dos cupos distintos y deja
-# el modelo bueno libre para el resumen, que es una sola llamada y la que mas
-# calidad necesita.
 GEMINI_MODEL_BULK = os.getenv("GEMINI_MODEL_BULK", "gemini-flash-lite-latest")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 
 def _pick_provider() -> str:
-    """Elige proveedor segun las credenciales disponibles.
-
-    LLM_PROVIDER fuerza uno explicitamente. Sin esa variable se usa el que
-    tenga API key: Claude si esta configurada, si no Gemini. Asi el proyecto
-    arranca con lo que haya sin tocar codigo.
-
-    Nota: la suscripcion Claude Pro/Max NO habilita la API. El acceso a la API
-    se factura aparte desde console.anthropic.com.
-    """
     forced = os.getenv("LLM_PROVIDER", "").strip().lower()
     if forced in ("claude", "gemini"):
         return forced
@@ -60,8 +48,9 @@ def _pick_provider() -> str:
 
 PROVIDER = _pick_provider()
 
-CHUNK_SIZE = int(os.getenv("LLM_CHUNK_SIZE", "40"))
-MAX_PARALLEL = int(os.getenv("LLM_MAX_PARALLEL", "3" if PROVIDER == "gemini" else "6"))
+# Con Gemini usamos chunks más grandes (menos requests) y paralelismo 1 para respetar el RPM
+CHUNK_SIZE = int(os.getenv("LLM_CHUNK_SIZE", "60" if PROVIDER == "gemini" else "40"))
+MAX_PARALLEL = int(os.getenv("LLM_MAX_PARALLEL", "1" if PROVIDER == "gemini" else "6"))
 
 RIESGOS = ["Bajo", "Medio", "Alto"]
 
@@ -69,12 +58,7 @@ _EMO_LOOKUP = {e.lower(): e for e in EMOTIONS}
 
 
 # ---------------------------------------------------------------------------
-# Esquemas de salida.
-#
-# El enum de emociones va DENTRO del esquema, así el proveedor garantiza
-# estructuralmente una etiqueta válida en vez de que la corrijamos después.
-# Esto elimina el zoológico de etiquetas libres ("Entusiasmo", "Empatía",
-# "Determinación"...) que devolvía la versión anterior.
+# Esquemas de salida
 # ---------------------------------------------------------------------------
 
 CHUNK_SCHEMA = {
@@ -117,15 +101,10 @@ def is_configured() -> bool:
     return bool(ANTHROPIC_API_KEY if PROVIDER == "claude" else GEMINI_API_KEY)
 
 
-# Version concreta que devolvio el proveedor en la ultima llamada.
-# "gemini-flash-latest" es un alias: sin esto no hay forma de saber que modelo
-# corrio realmente, lo cual importa para poder citar la fuente en el informe.
 _resolved: dict[str, str] = {}
 
 
 def describe() -> dict:
-    """Que proveedor y modelos estan en uso, para /api/health y para dejar
-    constancia en el JSON de cada sesion."""
     if PROVIDER == "claude":
         cfg = {"resumen": CLAUDE_MODEL, "traduccion": CLAUDE_MODEL}
     else:
@@ -134,7 +113,6 @@ def describe() -> dict:
         "proveedor": PROVIDER,
         "configurado": is_configured(),
         "modelos": cfg,
-        # Se completa despues de la primera llamada real.
         "version_resuelta": dict(_resolved),
         "chunk_size": CHUNK_SIZE,
         "paralelismo": MAX_PARALLEL,
@@ -142,7 +120,7 @@ def describe() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Prompts (compartidos por ambos proveedores)
+# Prompts
 # ---------------------------------------------------------------------------
 
 SYSTEM_TRANSLATE = (
@@ -231,18 +209,11 @@ def _anthropic():
     global _client
     if _client is None:
         import anthropic
-        # Sin argumentos: resuelve ANTHROPIC_API_KEY o el perfil de `ant auth login`.
         _client = anthropic.Anthropic()
     return _client
 
 
 def _claude_json(system, prompt, schema, effort):
-    """Una llamada con salida estructurada garantizada por esquema.
-
-    Va con el fallback de servidor activado: el material clínico (ideación
-    suicida, autolesiones) puede activar los clasificadores de seguridad, y sin
-    fallback la sesión entera se quedaría sin resumen.
-    """
     resp = _anthropic().beta.messages.create(
         model=CLAUDE_MODEL,
         max_tokens=16000,
@@ -264,7 +235,6 @@ def _claude_json(system, prompt, schema, effort):
             + (" (categoría: {})".format(cat) if cat else "")
         )
 
-    # El modelo que respondio puede diferir del pedido si actuo un fallback.
     _resolved[CLAUDE_MODEL] = getattr(resp, "model", CLAUDE_MODEL)
 
     text = next((b.text for b in resp.content if b.type == "text"), None)
@@ -274,11 +244,9 @@ def _claude_json(system, prompt, schema, effort):
 
 
 # ---------------------------------------------------------------------------
-# Backend: Gemini
+# Backend: Gemini (Thread-safe y tolerante a cierres)
 # ---------------------------------------------------------------------------
 
-# Material clinico: los filtros por defecto bloquean relatos de autolesion o
-# ideacion suicida, que es justo lo que hay que poder analizar.
 _SAFETY_CATEGORIES = (
     "HARM_CATEGORY_HARASSMENT",
     "HARM_CATEGORY_HATE_SPEECH",
@@ -286,40 +254,49 @@ _SAFETY_CATEGORIES = (
     "HARM_CATEGORY_DANGEROUS_CONTENT",
 )
 
-_gclient = None
+_thread_local = threading.local()
 
 
 def _google():
-    """Cliente del SDK google-genai (sucesor de google-generativeai)."""
-    global _gclient
-    if _gclient is None:
+    """Retorna un cliente independiente por cada hilo del pool."""
+    client = getattr(_thread_local, "client", None)
+    if client is None:
         from google import genai
-        _gclient = genai.Client(api_key=GEMINI_API_KEY)
-    return _gclient
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        _thread_local.client = client
+    return client
+
+
+def _reset_google():
+    """Descarta el cliente cerrado del hilo actual para forzar uno nuevo."""
+    _thread_local.client = None
 
 
 def _gemini_json(system, prompt, schema, effort, model_name=None):
     from google.genai import types
 
-    resp = _google().models.generate_content(
-        model=model_name or GEMINI_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=system,
-            temperature=0.15,
-            response_mime_type="application/json",
-            safety_settings=[
-                types.SafetySetting(category=c, threshold="BLOCK_NONE")
-                for c in _SAFETY_CATEGORIES
-            ],
-            http_options=types.HttpOptions(timeout=180_000),  # milisegundos
-            # No usamos herramientas; apagarlo evita el aviso del SDK.
-            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
-        ),
-    )
-    # "gemini-flash-latest" es un alias movil; model_version trae la version
-    # concreta que atendio la request (ej: "gemini-3.5-flash-lite").
     alias = model_name or GEMINI_MODEL
+    try:
+        resp = _google().models.generate_content(
+            model=alias,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system,
+                temperature=0.15,
+                response_mime_type="application/json",
+                safety_settings=[
+                    types.SafetySetting(category=c, threshold="BLOCK_NONE")
+                    for c in _SAFETY_CATEGORIES
+                ],
+                http_options=types.HttpOptions(timeout=180_000),
+                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+            ),
+        )
+    except RuntimeError as e:
+        if "closed" in str(e).lower():
+            _reset_google()
+        raise e
+
     _resolved[alias] = getattr(resp, "model_version", None) or alias
 
     raw = resp.text.strip()
@@ -331,12 +308,6 @@ def _gemini_json(system, prompt, schema, effort, model_name=None):
 
 
 def _coerce(data, schema):
-    """Tolera que el proveedor devuelva el array sin el objeto contenedor.
-
-    Gemini no aplica el esquema de salida, asi que a veces responde
-    `[{...}]` en vez de `{"items": [{...}]}`. En Claude no pasa porque el
-    esquema es vinculante, pero la correccion es inofensiva para ambos.
-    """
     if not isinstance(data, list):
         return data
     array_props = [k for k, v in schema.get("properties", {}).items()
@@ -350,29 +321,23 @@ def _is_rate_limit(exc) -> bool:
 
 
 def _is_overloaded(exc) -> bool:
-    """Modelo saturado: 503 UNAVAILABLE. Transitorio, conviene reintentar."""
     txt = str(exc).lower()
     return "503" in txt or "unavailable" in txt or "overloaded" in txt
 
 
 def _is_daily_quota(exc) -> bool:
-    """Cupo diario agotado: esperar no lo recupera, no tiene sentido reintentar."""
     return "perday" in str(exc).lower().replace("_", "").replace("-", "")
 
 
 def _retryable(exc) -> bool:
     if _is_daily_quota(exc):
-        return False   # el cupo diario no se recupera esperando
-    return _is_rate_limit(exc) or _is_overloaded(exc)
+        return False
+    txt = str(exc).lower()
+    is_closed = "client has been closed" in txt or "closed" in txt
+    return _is_rate_limit(exc) or _is_overloaded(exc) or is_closed
 
 
 def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
-    """Ejecuta la consulta reintentando ante fallos transitorios.
-
-    Dos casos frecuentes con Gemini gratuito: el 429 por limite de tasa (los
-    chunks en paralelo consumen el cupo por minuto) y el 503 por saturacion
-    del modelo. Ambos se recuperan esperando; el cupo diario agotado no.
-    """
     delay = 8.0
     for attempt in range(attempts):
         try:
@@ -383,7 +348,7 @@ def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
         except Exception as e:  # noqa: BLE001
             if not _retryable(e) or attempt == attempts - 1:
                 raise
-            motivo = "saturado" if _is_overloaded(e) else "limite de tasa"
+            motivo = "cliente cerrado" if "closed" in str(e).lower() else ("saturado" if _is_overloaded(e) else "limite de tasa")
             print("[LLM/{}] {}, reintento {}/{} en {:.0f}s".format(
                 PROVIDER, motivo, attempt + 1, attempts - 1, delay))
             time.sleep(delay)
@@ -395,8 +360,6 @@ def _ask(system, prompt, schema, effort="high", attempts=3, bulk=False):
 # ---------------------------------------------------------------------------
 
 def _normalize_emotion(value):
-    """Red de seguridad. Con el esquema activo casi nunca hace falta, pero
-    protege si el proveedor devuelve algo fuera del enum."""
     if not value:
         return "Neutral"
     key = str(value).strip().lower()
@@ -421,12 +384,6 @@ def _normalize_emotion(value):
 
 
 def _normalize_summary(data, empty):
-    """Ajusta la forma de la respuesta del resumen.
-
-    Sin esquema vinculante (ruta Gemini) el modelo devuelve variantes: "Moderado"
-    en vez de "Medio", o un string donde se esperaba una lista. Con Claude el
-    esquema lo impide, pero normalizar es inofensivo y protege ambas rutas.
-    """
     out = {**empty, **{k: data.get(k, empty[k]) for k in empty}}
 
     riesgo = str(out.get("riesgo") or "").strip().lower()
@@ -441,7 +398,6 @@ def _normalize_summary(data, empty):
     for key in ("indicadores", "sugerencias"):
         val = out.get(key)
         if isinstance(val, str):
-            # Un string donde iba una lista: lo partimos por saltos o viñetas.
             partes = [x.strip(" -*•") for x in re.split(r"[\n;]+", val)]
             out[key] = [x for x in partes if x]
         elif not isinstance(val, list):
@@ -459,8 +415,6 @@ def _normalize_summary(data, empty):
 def _process_chunk(args):
     offset, items = args
     try:
-        # Traducir es mecánico: esfuerzo bajo baja costo y latencia sin perder
-        # calidad. El razonamiento profundo se reserva para el resumen.
         data = _ask(SYSTEM_TRANSLATE, _chunk_prompt(items), CHUNK_SCHEMA,
                     effort="low", bulk=True)
         out = {}
@@ -479,7 +433,6 @@ def _process_chunk(args):
 
 
 def translate_and_tag(segments, on_chunk=None):
-    """Enriquece los segmentos in-place con traducción y emoción."""
     if not is_configured():
         for s in segments:
             s.setdefault("text_en", "")
@@ -504,7 +457,6 @@ def translate_and_tag(segments, on_chunk=None):
 
 
 def clinical_summary(segments, stats):
-    """Resumen clínico apoyado en las métricas objetivas ya calculadas."""
     empty = {"resumen": "", "riesgo": "No evaluado", "justificacion_riesgo": "",
              "indicadores": [], "sugerencias": []}
 
@@ -516,10 +468,6 @@ def clinical_summary(segments, stats):
     try:
         return _normalize_summary(_ask(SYSTEM_SUMMARY, prompt, SUMMARY_SCHEMA), empty)
     except Exception as e:  # noqa: BLE001
-        # Si el modelo principal no responde, un resumen del modelo liviano es
-        # mejor que ninguno. Se incluye el cupo diario agotado a proposito: no
-        # sirve reintentar el MISMO modelo, pero el lite tiene su propio cupo,
-        # asi que cambiar de modelo si resuelve el problema.
         if PROVIDER == "gemini" and (_is_rate_limit(e) or _is_overloaded(e)):
             print("[LLM/gemini] cupo agotado en {}, reintento con {}".format(
                 GEMINI_MODEL, GEMINI_MODEL_BULK))

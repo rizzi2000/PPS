@@ -1,12 +1,4 @@
-"""Orquestación del análisis, por etapas y con resultados incrementales.
-
-Ordenamos las etapas por "valor percibido / tiempo de cómputo": el usuario
-ve el waveform a los ~2 s, la transcripción va apareciendo mientras se
-procesa, y el resumen (lo más lento) llega al final. Nada bloquea a nada.
-
-Antes: un único POST bloqueante que devolvía todo junto al cabo de varios
-minutos, y encima corriendo en el event loop de asyncio.
-"""
+"""Orquestación del análisis, por etapas y con resultados incrementales."""
 import json
 import os
 import time
@@ -17,7 +9,6 @@ from . import asr, audio_io, diarize, llm, prosody
 
 
 def _speech_regions(segments: list[dict]) -> list[tuple[float, float]]:
-    """Zonas con voz según el VAD del ASR, fusionando huecos chicos."""
     regions: list[list[float]] = []
     for s in segments:
         if regions and s["start"] - regions[-1][1] < 0.5:
@@ -32,20 +23,19 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
     try:
         job.status = "running"
 
-        # --- Etapa 1: decodificar y dibujar (rápida) ----------------------
+        # --- Etapa 1: decodificar y dibujar ---
         job.progress("decode", 2, "Decodificando audio...")
         samples = audio_io.decode_to_pcm(audio_path)
         duration = samples.size / audio_io.SAMPLE_RATE
 
         peaks = audio_io.compute_peaks(samples)
-        # El front ya puede renderizar el waveform completo acá.
         job.emit("peaks", peaks)
         job.progress("decode", 8, f"Audio listo ({duration/60:.1f} min)")
 
         if job.cancelled:
             return
 
-        # --- Etapa 2: transcripción en streaming --------------------------
+        # --- Etapa 2: transcripción ---
         job.progress("asr", 10, "Transcribiendo...")
         raw_segments: list[dict] = []
 
@@ -56,7 +46,6 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
                 job.emit("asr_info", item)
                 continue
             raw_segments.append(item)
-            # Emisión incremental: el texto aparece mientras se procesa.
             job.emit("segment", item)
             pct = 10 + 45 * min(1.0, item["end"] / max(duration, 1e-6))
             job.progress("asr", pct, f"Transcribiendo {item['end']/60:.1f}/{duration/60:.1f} min")
@@ -66,11 +55,9 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
 
         job.progress("asr", 55, f"{len(raw_segments)} enunciados transcriptos")
 
-        # --- Etapa 3: diarización -----------------------------------------
+        # --- Etapa 3: diarización ---
         job.progress("diarize", 58, "Identificando hablantes...")
         turns = diarize.diarize(samples, _speech_regions(raw_segments), n_speakers)
-
-        # Cortamos los segmentos en los límites de hablante.
         segments = asr.split_segments_by_turns(raw_segments, turns)
 
         roles = diarize.assign_roles(segments)
@@ -95,18 +82,17 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
         })
         job.progress("diarize", 68, f"{len(set(roles))} hablantes detectados")
 
-        # --- Etapa 4: prosodia (métricas reales) ---------------------------
+        # --- Etapa 4: prosodia ---
         job.progress("prosody", 70, "Midiendo ritmo y prosodia...")
         prosody.enrich(samples, segments)
         stats = prosody.speaker_summary(segments)
 
-        # Los segmentos ya reordenados y con métricas reemplazan a los crudos.
         job.emit("segments_final", {"segments": segments, "stats": stats})
         job.progress("prosody", 78, "Métricas calculadas")
 
-        del samples  # liberamos memoria antes de la etapa de red (8 GB)
+        del samples  # Liberamos memoria
 
-        # --- Etapa 5: traducción + emoción (paralelo) ----------------------
+        # --- Etapa 5: traducción + emoción (LLM) ---
         job.progress("llm", 80, "Traduciendo y clasificando emociones...")
 
         def on_chunk(done, total):
@@ -120,20 +106,18 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
             for i, s in enumerate(segments)
         ])
 
-        # --- Etapa 6: resumen clínico --------------------------------------
+        # --- Etapa 6: resumen clínico (LLM) ---
         job.progress("summary", 93, "Redactando resumen clínico...")
         summary = llm.clinical_summary(segments, stats)
         job.emit("summary", summary)
 
-        # --- Persistencia --------------------------------------------------
+        # --- Persistencia ---
         result = {
             "job_id": job.id,
             "filename": job.filename,
             "duration": round(duration, 2),
             "created_at": job.created_at,
             "elapsed": round(time.time() - t0, 1),
-            # Procedencia: con qué se generó este análisis. Necesario para poder
-            # citar la fuente en un informe y para reproducir resultados.
             "modelos": {
                 "asr": WHISPER_MODEL,
                 "diarizacion": "ecapa" if diarize._encoder is not None else "mfcc",
