@@ -4,6 +4,10 @@ import { EmotionBars, ShareBar, Tile, Trend } from './charts'
 import { useMetricsData } from '../useMetricsData'
 import { fmtTime, roleClass, SERIES } from '../utils'
 
+const PRE_ROLL = 2     // segundos de contexto antes del enunciado
+const POST_ROLL = 2    // y después
+const MIN_WINDOW = 8   // nunca menos que esto en total
+
 /**
  * Vista ampliada de métricas.
  *
@@ -30,23 +34,29 @@ export default function MetricsLab({
   const armed = useRef(false)
   const m = useMetricsData(segments, stats, roles, speaker)
 
+  // Muchos enunciados duran uno o dos segundos: escuchados solos no se
+  // entienden. Se reproduce una ventana con contexto antes y después.
   const listen = (item) => {
     if (!item) return
     onPause?.()
     armed.current = false
-    setCue(item)
-    onSeek(item.start)
+    const from = Math.max(0, item.start - PRE_ROLL)
+    const to = Math.min(duration || Infinity,
+      Math.max(item.end + POST_ROLL, from + MIN_WINDOW))
+    const next = { ...item, from, to }
+    setCue(next)
+    onSeek(next.from)
   }
 
   const playCue = () => {
     if (!cue) return
-    if (currentTime < cue.start || currentTime >= cue.end - 0.05) onSeek(cue.start)
+    if (currentTime < cue.from || currentTime >= cue.to - 0.05) onSeek(cue.from)
     armed.current = true
     onPlay?.()
   }
 
   useEffect(() => {
-    if (playing && cue && stopAtEnd && armed.current && currentTime >= cue.end) {
+    if (playing && cue && stopAtEnd && armed.current && currentTime >= cue.to) {
       armed.current = false
       onPause?.()
     }
@@ -324,9 +334,13 @@ function CuePanel({
   }
 
   const len = Math.max(0.1, cue.end - cue.start)
-  const inside = currentTime >= cue.start && currentTime <= cue.end
-  const pct = inside ? Math.min(100, ((currentTime - cue.start) / len) * 100)
-    : currentTime > cue.end ? 100 : 0
+  const span = Math.max(0.1, cue.to - cue.from)
+  const inside = currentTime >= cue.from && currentTime <= cue.to
+  const pct = inside ? Math.min(100, ((currentTime - cue.from) / span) * 100)
+    : currentTime > cue.to ? 100 : 0
+  // Dónde cae el enunciado dentro de la ventana que se escucha.
+  const mark = { left: `${((cue.start - cue.from) / span) * 100}%`,
+                 width: `${(len / span) * 100}%` }
 
   return (
     <section className="lab-block cue-panel" aria-live="polite">
@@ -341,6 +355,9 @@ function CuePanel({
         {fmtTime(cue.start)} – {fmtTime(cue.end)}
         <span className="muted"> · {len.toFixed(1)} s</span>
       </div>
+      <div className="cue-window muted">
+        Se escucha de {fmtTime(cue.from)} a {fmtTime(cue.to)}, con contexto antes y después.
+      </div>
 
       <div className="cue-tags">
         {cue.gap && <span className="chip warn">Sin transcribir</span>}
@@ -354,7 +371,10 @@ function CuePanel({
         {cue.gap ? 'Tramo con voz que el reconocedor no transcribió.' : (cue.texto || '—')}
       </p>
 
-      <div className="cue-progress" aria-hidden="true"><div style={{ width: `${pct}%` }} /></div>
+      <div className="cue-progress" aria-hidden="true">
+        <span className="cue-mark" style={mark} />
+        <div style={{ width: `${pct}%` }} />
+      </div>
 
       <div className="cue-controls">
         {playing
@@ -365,7 +385,7 @@ function CuePanel({
 
       <label className="cue-stop">
         <input type="checkbox" checked={stopAtEnd} onChange={(e) => setStopAtEnd(e.target.checked)} />
-        Detener al terminar el fragmento
+        Detener al terminar la ventana
       </label>
     </section>
   )

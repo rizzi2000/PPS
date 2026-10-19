@@ -508,8 +508,11 @@ mark { background: color-mix(in srgb, var(--warning) 45%, transparent); color: i
   margin: 0 0 10px; font-size: 12.5px; line-height: 1.45; color: var(--ink-2);
   max-height: 7.3em; overflow-y: auto;
 }
-.cue-progress { height: 4px; border-radius: 2px; background: var(--surface); overflow: hidden; margin-bottom: 10px; }
-.cue-progress div { height: 100%; background: var(--accent); transition: width .2s linear; }
+.cue-window { font-size: 11px; color: var(--ink-muted); margin: -2px 0 8px; }
+.cue-progress { position: relative; height: 6px; border-radius: 3px; background: var(--surface); overflow: hidden; margin-bottom: 10px; }
+.cue-progress div { position: relative; height: 100%; background: var(--accent); opacity: .85; transition: width .2s linear; }
+/* Tramo del enunciado dentro de la ventana con contexto. */
+.cue-progress .cue-mark { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--accent) 30%, transparent); }
 .cue-controls { display: flex; gap: 8px; flex-wrap: wrap; }
 .cue-stop { display: flex; align-items: center; gap: 6px; margin-top: 9px; font-size: 11.5px; color: var(--ink-muted); }
 .lab-table .cue-panel { position: static; margin-bottom: 14px; }
