@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Minimize2, Table2, LineChart, Play, AlertTriangle, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Minimize2, Table2, LineChart, Play, Pause, RotateCcw, Headphones, AlertTriangle, X } from 'lucide-react'
 import { EmotionBars, ShareBar, Tile, Trend } from './charts'
 import { useMetricsData } from '../useMetricsData'
 import { fmtTime, roleClass, SERIES } from '../utils'
@@ -11,13 +11,46 @@ import { fmtTime, roleClass, SERIES } from '../utils'
  * analiza: los gráficos ocupan el ancho real, comparten cursor temporal, se
  * pueden acotar a un tramo con el selector inferior, y cada punto es
  * navegable hacia ese momento del audio.
+ *
+ * Esta vista tapa al reproductor principal, así que tocar un punto (o un
+ * elemento de las listas) no basta con mover el audio: se abre un panel al
+ * costado con ese fragmento y un botón de play. No arranca solo; escuchar o
+ * no lo decide el profesional.
  */
 export default function MetricsLab({
   segments, stats, roles, names, duration, currentTime, onSeek, onClose,
+  playing, onPlay, onPause,
 }) {
   const [speaker, setSpeaker] = useState(null)
   const [view, setView] = useState('graficos')
+  const [cue, setCue] = useState(null)
+  const [stopAtEnd, setStopAtEnd] = useState(true)
+  // Sólo cortamos al final si la reproducción arrancó desde el panel; si el
+  // usuario siguió de largo una vez, no lo frenamos de nuevo.
+  const armed = useRef(false)
   const m = useMetricsData(segments, stats, roles, speaker)
+
+  const listen = (item) => {
+    if (!item) return
+    onPause?.()
+    armed.current = false
+    setCue(item)
+    onSeek(item.start)
+  }
+
+  const playCue = () => {
+    if (!cue) return
+    if (currentTime < cue.start || currentTime >= cue.end - 0.05) onSeek(cue.start)
+    armed.current = true
+    onPlay?.()
+  }
+
+  useEffect(() => {
+    if (playing && cue && stopAtEnd && armed.current && currentTime >= cue.end) {
+      armed.current = false
+      onPause?.()
+    }
+  }, [currentTime, playing, cue, stopAtEnd, onPause])
 
   // Escape cierra; mientras está abierto el fondo no debe scrollear.
   useEffect(() => {
@@ -108,7 +141,7 @@ export default function MetricsLab({
                     <p>Comparada con la forma habitual de hablar de esta persona en la sesión</p>
                   </header>
                   <Trend data={m.data} series={SERIES.velocidad} duration={duration}
-                         currentTime={currentTime} onSeek={onSeek} height={190}
+                         currentTime={currentTime} onSeek={(t, d) => listen(d)} highlight={cue} height={190}
                          band={[-0.8, 0.8, 'lo habitual en esta persona']} zero blocks={m.blocks} />
                 </section>
 
@@ -118,7 +151,7 @@ export default function MetricsLab({
                     <p>Cuánto sube el volumen y el tono. Indica activación, no una emoción concreta</p>
                   </header>
                   <Trend data={m.data} series={SERIES.intensidad} duration={duration}
-                         currentTime={currentTime} onSeek={onSeek} height={190}
+                         currentTime={currentTime} onSeek={(t, d) => listen(d)} highlight={cue} height={190}
                          band={[-0.8, 0.8, 'lo habitual en esta persona']} zero />
                 </section>
 
@@ -128,12 +161,17 @@ export default function MetricsLab({
                     <p>El valor absoluto, sin comparar. Arrastrá la barra de abajo para acotar el tramo</p>
                   </header>
                   <Trend data={m.data} series={SERIES.rate} duration={duration}
-                         currentTime={currentTime} onSeek={onSeek} height={210}
+                         currentTime={currentTime} onSeek={(t, d) => listen(d)} highlight={cue} height={210}
                          band={[5, 7, 'típico en español rioplatense']} brush />
                 </section>
               </div>
 
               <div className="lab-side">
+                <CuePanel cue={cue} currentTime={currentTime} playing={playing}
+                          onPlay={playCue} onPause={onPause} onRestart={() => listen(cue)}
+                          onClose={() => { onPause?.(); setCue(null) }}
+                          stopAtEnd={stopAtEnd} setStopAtEnd={setStopAtEnd} />
+
                 {m.blocks.length > 0 && (
                   <section className="lab-block">
                     <h3><AlertTriangle size={13} style={{ verticalAlign: -2, marginRight: 6,
@@ -142,7 +180,7 @@ export default function MetricsLab({
                     <ul className="jump-list">
                       {m.blocks.slice(0, 8).map((b) => (
                         <li key={b.start}>
-                          <button onClick={() => onSeek(b.start)}>
+                          <button onClick={() => listen(b)}>
                             <Play size={11} fill="currentColor" />
                             <span className="ts">{fmtTime(b.start)}</span>
                             <span className="dur">{b.pausa}s</span>
@@ -165,7 +203,7 @@ export default function MetricsLab({
                     <ul className="jump-list">
                       {m.gaps.slice(0, 6).map((g) => (
                         <li key={g.start}>
-                          <button onClick={() => onSeek(Math.max(0, g.start - g.dur))}>
+                          <button onClick={() => listen({ start: Math.max(0, g.start - g.dur), end: g.start, gap: true })}>
                             <Play size={11} fill="currentColor" />
                             <span className="ts">{fmtTime(Math.max(0, g.start - g.dur))}</span>
                             <span className="dur">{g.dur}s sin texto</span>
@@ -186,7 +224,7 @@ export default function MetricsLab({
                       ['Pausa más larga', m.extremes.pausaMax],
                     ].filter(([, d]) => d).map(([label, d]) => (
                       <li key={label}>
-                        <button onClick={() => onSeek(d.start)}>
+                        <button onClick={() => listen(d)}>
                           <Play size={11} fill="currentColor" />
                           <span className="ts">{fmtTime(d.start)}</span>
                           <span className="dur">{label}</span>
@@ -216,6 +254,12 @@ export default function MetricsLab({
 
           {m.hasData && view === 'tabla' && (
             <div className="lab-table">
+              {cue && (
+                <CuePanel cue={cue} currentTime={currentTime} playing={playing}
+                          onPlay={playCue} onPause={onPause} onRestart={() => listen(cue)}
+                          onClose={() => { onPause?.(); setCue(null) }}
+                          stopAtEnd={stopAtEnd} setStopAtEnd={setStopAtEnd} />
+              )}
               <div className="tablewrap">
                 <table>
                   <thead>
@@ -227,7 +271,8 @@ export default function MetricsLab({
                   </thead>
                   <tbody>
                     {m.data.map((d) => (
-                      <tr key={d.start} onClick={() => onSeek(d.start)} className="clickable">
+                      <tr key={d.start} onClick={() => listen(d)}
+                          className={`clickable${cue?.start === d.start ? ' selected' : ''}`}>
                         <td className="num">{fmtTime(d.start)}</td>
                         <td>{d.velLabel}</td>
                         <td>{d.intLabel}</td>
@@ -245,7 +290,7 @@ export default function MetricsLab({
                 </table>
               </div>
               <p className="muted" style={{ marginTop: 10, fontSize: 12 }}>
-                Clic en cualquier fila para ir a ese momento del audio.
+                Clic en cualquier fila para escuchar ese fragmento.
               </p>
             </div>
           )}
@@ -256,5 +301,72 @@ export default function MetricsLab({
         <X size={18} />
       </button>
     </div>
+  )
+}
+
+/**
+ * Reproductor del fragmento elegido. Controla el mismo audio que el
+ * reproductor principal, así al cerrar la vista ampliada todo queda en sync.
+ */
+function CuePanel({
+  cue, currentTime, playing, onPlay, onPause, onRestart, onClose, stopAtEnd, setStopAtEnd,
+}) {
+  if (!cue) {
+    return (
+      <section className="lab-block cue-panel empty-cue">
+        <h3><Headphones size={13} style={{ verticalAlign: -2, marginRight: 6 }} />Escuchar un momento</h3>
+        <p className="muted">
+          Tocá un punto de cualquier gráfico, o un elemento de las listas, para
+          escuchar ese fragmento acá sin cerrar las métricas.
+        </p>
+      </section>
+    )
+  }
+
+  const len = Math.max(0.1, cue.end - cue.start)
+  const inside = currentTime >= cue.start && currentTime <= cue.end
+  const pct = inside ? Math.min(100, ((currentTime - cue.start) / len) * 100)
+    : currentTime > cue.end ? 100 : 0
+
+  return (
+    <section className="lab-block cue-panel" aria-live="polite">
+      <div className="cue-head">
+        <h3><Headphones size={13} style={{ verticalAlign: -2, marginRight: 6 }} />Momento seleccionado</h3>
+        <button className="btn ghost icon" onClick={onClose} aria-label="Cerrar fragmento">
+          <X size={14} />
+        </button>
+      </div>
+
+      <div className="cue-time">
+        {fmtTime(cue.start)} – {fmtTime(cue.end)}
+        <span className="muted"> · {len.toFixed(1)} s</span>
+      </div>
+
+      <div className="cue-tags">
+        {cue.gap && <span className="chip warn">Sin transcribir</span>}
+        {cue.velLabel && cue.velLabel !== 'Normal' && <span className="chip">{cue.velLabel}</span>}
+        {cue.intLabel && cue.intLabel !== 'Normal' && <span className="chip">Intensidad {cue.intLabel.toLowerCase()}</span>}
+        {cue.blocked && <span className="chip critical">Bloqueo {cue.pausa}s</span>}
+        {cue.emocion && cue.emocion !== 'Neutral' && <span className="chip">{cue.emocion}</span>}
+      </div>
+
+      <p className="cue-text">
+        {cue.gap ? 'Tramo con voz que el reconocedor no transcribió.' : (cue.texto || '—')}
+      </p>
+
+      <div className="cue-progress" aria-hidden="true"><div style={{ width: `${pct}%` }} /></div>
+
+      <div className="cue-controls">
+        {playing
+          ? <button className="btn primary" onClick={onPause}><Pause size={14} /> Pausar</button>
+          : <button className="btn primary" onClick={onPlay}><Play size={14} fill="currentColor" /> Reproducir</button>}
+        <button className="btn ghost" onClick={onRestart}><RotateCcw size={14} /> Desde el inicio</button>
+      </div>
+
+      <label className="cue-stop">
+        <input type="checkbox" checked={stopAtEnd} onChange={(e) => setStopAtEnd(e.target.checked)} />
+        Detener al terminar el fragmento
+      </label>
+    </section>
   )
 }

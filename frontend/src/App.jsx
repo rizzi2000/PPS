@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AudioWaveform, Moon, Sun, Download, RotateCcw, History, X } from 'lucide-react'
 import { useAnalysis } from './useAnalysis'
-import { exportJSON, getSession, listSessions } from './api'
+import { exportJSON, getPeaks, getSession, listSessions } from './api'
 import { Dropzone, ProgressRail } from './components/Uploader'
 import Player from './components/Player'
 import Transcript from './components/Transcript'
@@ -17,6 +17,7 @@ export default function App() {
   const [sessions, setSessions] = useState([])
   const [showHistory, setShowHistory] = useState(false)
   const [labOpen, setLabOpen] = useState(false)
+  const [playing, setPlaying] = useState(false)
   const playerRef = useRef(null)
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function App() {
   const openSession = async (id) => {
     try {
       const data = await getSession(id)
+      if (!data.peaks) data.peaks = await getPeaks(id).catch(() => null)
       setCurrentTime(0)
       setLabOpen(false)
       load(data)
@@ -128,6 +130,7 @@ export default function App() {
               roles={state.roles}
               currentTime={currentTime}
               onTime={setCurrentTime}
+              onPlayState={setPlaying}
             />
 
             <Transcript
@@ -163,6 +166,9 @@ export default function App() {
           duration={state.duration}
           currentTime={currentTime}
           onSeek={handleSeek}
+          playing={playing}
+          onPlay={() => playerRef.current?.play()}
+          onPause={() => playerRef.current?.pause()}
           onClose={() => setLabOpen(false)}
         />
       )}

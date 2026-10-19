@@ -30,3 +30,7 @@ frontend/.env.local
 *.ogg
 *.flac
 *.webm
+
+# Benchmark: audios y anotaciones del corpus, y resultados generados
+backend/benchmark/corpus/
+backend/benchmark/resultados/

@@ -52,7 +52,7 @@ function Tip({ active, payload, series }) {
  */
 export function Trend({
   data, series, duration, currentTime, onSeek,
-  height = 130, band, zero = false, brush = false, blocks = [],
+  height = 130, band, zero = false, brush = false, blocks = [], highlight,
 }) {
   const gid = `grad-${series.key}`
   return (
@@ -61,7 +61,12 @@ export function Trend({
         <AreaChart
           data={data} syncId="metricas"
           margin={{ top: 6, right: 10, left: 6, bottom: brush ? 0 : 2 }}
-          onClick={(e) => e?.activePayload?.[0] && onSeek?.(e.activePayload[0].payload.start)}
+          // Recharts 3 ya no manda `activePayload` en el clic: sólo el índice
+          // del punto activo. Con él recuperamos el enunciado completo.
+          onClick={(e) => {
+            const d = data[Number(e?.activeIndex)]
+            if (d) onSeek?.(d.start, d)
+          }}
           style={{ cursor: onSeek ? 'pointer' : 'default' }}
         >
           <defs>
@@ -100,6 +105,12 @@ export function Trend({
             <ReferenceLine key={b.t} x={b.t} stroke="var(--critical)" strokeWidth={1.5}
                            strokeDasharray="2 2" />
           ))}
+
+          {/* Fragmento elegido para escuchar en el panel lateral. */}
+          {highlight && (
+            <ReferenceArea x1={highlight.start} x2={highlight.end} fill="var(--accent)"
+                           fillOpacity={0.14} />
+          )}
 
           <ReferenceLine x={currentTime} stroke="var(--ink)" strokeWidth={1.5} strokeOpacity={0.55} />
 

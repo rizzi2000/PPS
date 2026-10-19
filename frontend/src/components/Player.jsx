@@ -14,7 +14,9 @@ const SPEEDS = [0.75, 1, 1.25, 1.5, 2]
  * archivo entero en el navegador. El audio se sirve con soporte de Range, por
  * lo que el seek funciona aunque la sesión dure una hora.
  */
-const Player = forwardRef(function Player({ jobId, peaks, duration, turns, roles, currentTime, onTime }, ref) {
+const Player = forwardRef(function Player({
+  jobId, peaks, duration, turns, roles, currentTime, onTime, onPlayState,
+}, ref) {
   const containerRef = useRef(null)
   const wsRef = useRef(null)
   const [ready, setReady] = useState(false)
@@ -47,15 +49,18 @@ const Player = forwardRef(function Player({ jobId, peaks, duration, turns, roles
     })
 
     ws.on('ready', () => setReady(true))
-    ws.on('play', () => setPlaying(true))
-    ws.on('pause', () => setPlaying(false))
-    ws.on('finish', () => setPlaying(false))
+    // El estado de reproducción también se publica hacia arriba: la vista
+    // ampliada de métricas tapa este reproductor y necesita su propio botón.
+    const setState = (v) => { setPlaying(v); onPlayState?.(v) }
+    ws.on('play', () => setState(true))
+    ws.on('pause', () => setState(false))
+    ws.on('finish', () => setState(false))
     ws.on('timeupdate', (t) => { if (!seekingRef.current) onTime(t) })
 
     wsRef.current = ws
     setReady(false)
-    return () => { ws.destroy(); wsRef.current = null }
-  }, [peaks, duration, jobId, onTime])
+    return () => { ws.destroy(); wsRef.current = null; onPlayState?.(false) }
+  }, [peaks, duration, jobId, onTime, onPlayState])
 
   useEffect(() => {
     wsRef.current?.setPlaybackRate(speed)
@@ -71,6 +76,8 @@ const Player = forwardRef(function Player({ jobId, peaks, duration, turns, roles
       requestAnimationFrame(() => { seekingRef.current = false })
     },
     toggle() { wsRef.current?.playPause() },
+    play() { wsRef.current?.play() },
+    pause() { wsRef.current?.pause() },
     isReady: () => ready,
   }), [duration, onTime, ready])
 

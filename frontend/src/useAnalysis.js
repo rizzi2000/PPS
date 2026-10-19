@@ -118,6 +118,8 @@ export function useAnalysis() {
       jobId: result.job_id,
       filename: result.filename,
       duration: result.duration,
+      peaks: result.peaks?.data ?? null,
+      turns: result.turns || [],
       segments: result.segments || [],
       roles: result.speakers?.roles || {},
       names: result.speakers?.names || {},

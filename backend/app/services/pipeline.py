@@ -124,6 +124,10 @@ def run_pipeline(job: Job, audio_path: str, n_speakers: int | None = None):
                 "llm": llm.describe(),
             },
             "speakers": {"roles": roles, "names": speaker_names, "stats": stats},
+            # Waveform y turnos: sin esto, al reabrir la sesión desde el
+            # historial no había onda ni reproductor.
+            "peaks": peaks,
+            "turns": turns,
             "summary": summary,
             "segments": segments,
         }

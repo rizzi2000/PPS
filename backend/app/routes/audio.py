@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from ..core.config import ALLOWED_EXT, MAX_UPLOAD_MB, RESULTS_DIR, UPLOAD_DIR
 from ..core.jobs import registry
+from ..services import audio_io
 from ..services.pipeline import run_pipeline
 
 router = APIRouter()
@@ -144,6 +145,33 @@ def _find_audio(job_id: str) -> str:
         if os.path.exists(p):
             return p
     raise HTTPException(404, "Audio no encontrado")
+
+
+@router.get("/sessions/{job_id}/peaks")
+async def get_peaks(job_id: str):
+    """Envolvente del waveform para sesiones guardadas antes de persistirla.
+
+    Se calcula una vez (decodificar + peaks tarda ~1 s cada 5 min de audio) y
+    se guarda en el JSON del resultado, así la próxima apertura es inmediata.
+    """
+    path = os.path.join(RESULTS_DIR, f"{job_id}.json")
+    data = None
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        if data.get("peaks"):
+            return data["peaks"]
+
+    audio = _find_audio(job_id)
+    loop = asyncio.get_running_loop()
+    samples = await loop.run_in_executor(None, audio_io.decode_to_pcm, audio)
+    peaks = audio_io.compute_peaks(samples)
+
+    if data is not None:
+        data["peaks"] = peaks
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=1)
+    return peaks
 
 
 @router.get("/sessions/{job_id}/audio")

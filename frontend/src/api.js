@@ -37,6 +37,13 @@ export async function getSession(jobId) {
   return r.json()
 }
 
+// Sesiones guardadas antes de persistir la onda: el backend la calcula una vez.
+export async function getPeaks(jobId) {
+  const r = await fetch(`${API}/sessions/${jobId}/peaks`)
+  if (!r.ok) throw new Error('No se pudo obtener la forma de onda')
+  return r.json()
+}
+
 export function exportJSON(data, filename) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const a = document.createElement('a')
